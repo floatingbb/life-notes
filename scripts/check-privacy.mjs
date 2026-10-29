@@ -11,7 +11,11 @@ async function walk(directory,prefix=''){
   const text=await readFile(path.join(directory,entry.name),'utf8');
   const checks=[['private-key',/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/],['cloud-key',/AKIA[0-9A-Z]{16}|AKID[A-Za-z0-9]{20,}/],['credential-token',/gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/],['live-invite',/#(?:join|setup)=[A-Za-z0-9_-]{40,}/],['personal-local-path',/[A-Z]:[\\/](?:Users|GPT)[^\n"']*/],['bound-live-environment',/env\s*:\s*['"][a-z0-9]+-[a-z0-9]+-[a-z0-9]{10,}['"]/]];
   for(const [label,pattern]of checks)if(pattern.test(text))findings.push(rel+': '+label);
-  if(rel==='.env.example')for(const line of text.split(/\r?\n/)){if(/^(?:CLOUDBASE_APIKEY|SESSION_SECRET|BOOTSTRAP_TOKEN)=.+/.test(line))findings.push(rel+': example credentials must be empty')}
+  if(rel==='.env.example'){
+   for(const line of text.split(/\r?\n/)){if(/^(?:CLOUDBASE_APIKEY|SESSION_SECRET|BOOTSTRAP_TOKEN)=.+/.test(line))findings.push(rel+': example credentials must be empty')}
+   if(!/^SITE_ORIGIN=https:\/\/your-site\.example$/m.test(text))findings.push(rel+': site origin must remain a non-deployable example');
+   if(!/^CLOUDBASE_ENV_ID=YOUR_NEW_ENV_ID$/m.test(text))findings.push(rel+': environment ID must remain a placeholder');
+  }
  }
 }
 await walk(root);if(findings.length){console.error(findings.join('\n'));process.exitCode=1}else console.log('PASS: source-only allowlist, empty example secrets, no private keys, live invitation tokens, personal local paths, or bound live environment.');

@@ -8,8 +8,8 @@
   "files": [
     {
       "path": ".env.example",
-      "bytes": 216,
-      "sha256": "496e1f1b924b501a5de02df3b98d42fe53a655b0925015afdb8f4310d423b52d"
+      "bytes": 254,
+      "sha256": "7594080f9d90ccf996a4606a3f75bfa564317066090c2b68eb30236c5ba99620"
     },
     {
       "path": ".gitattributes",
@@ -33,13 +33,18 @@
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 3705,
-      "sha256": "0927fa42a38e6b36fa306f75edd47135ade9677e703edff63e789f17c4f0b1ad"
+      "bytes": 4322,
+      "sha256": "d30130bc7f9f8f09d6625668338b94a0c2722f62a834c6811bf2fed6f2a588bd"
+    },
+    {
+      "path": "docs/PRIVACY_AUDIT.md",
+      "bytes": 2218,
+      "sha256": "a2e652fa56ddda100d66bb3ced6704402bde96875e9820a679215ffb84d54bfa"
     },
     {
       "path": "docs/PRIVACY.md",
-      "bytes": 1675,
-      "sha256": "f01d4d6acd983af05eda1293403b603f541f24b0cdd4c7426ef3cc8df429c574"
+      "bytes": 1995,
+      "sha256": "56dc23e262df83f4e307aab2ed3e15888f2654d627354b449e5b2415bebc9c15"
     },
     {
       "path": "docs/USER_GUIDE.md",
@@ -73,8 +78,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 19758,
-      "sha256": "7b5e55ee54148a160c8c9d3a9a8c916f130b9d58fd402b81d264303e629359ab"
+      "bytes": 20300,
+      "sha256": "758a71f542a809b4528b2f648bf9bc46dcd4f562f55548586801fc26ae4271ad"
     },
     {
       "path": "scripts/build.mjs",
@@ -83,8 +88,8 @@
     },
     {
       "path": "scripts/check-privacy.mjs",
-      "bytes": 2137,
-      "sha256": "2d7260f031c9276a58d66954f73d218187c6c08ba60f37e75edc7147392daff5"
+      "bytes": 2404,
+      "sha256": "c550786d881dc18200466ce4ffca783ea4d7c5c7c4d0b17666a9a4c824205dc6"
     },
     {
       "path": "SECURITY.md",
@@ -108,13 +113,13 @@
     },
     {
       "path": "src/cloud-config.mjs",
-      "bytes": 832,
-      "sha256": "28285fa4a3eb916c841dd8c57189908e33a4b410b98b0c3fee1152f23ae7004c"
+      "bytes": 1406,
+      "sha256": "ba6bbf09bd6a93f62042abf97af05bd76f0bb425de4820c6870ea01896142080"
     },
     {
       "path": "src/cloud-handler.mjs",
-      "bytes": 6021,
-      "sha256": "e4948a00b244d5c4605637ff7da4dc0bc3094ce16c24cb9c9dc3a3d127645898"
+      "bytes": 6236,
+      "sha256": "5fd274e60d1de9fc4287ad1358421e452c4f80b5cc5c3dc75a5c313d7c3b0169"
     },
     {
       "path": "src/core.mjs",
@@ -193,8 +198,8 @@
     },
     {
       "path": "tests/cloud-config.test.mjs",
-      "bytes": 924,
-      "sha256": "071ba663fa3d583482d006c9c71b409b9b4a177cb06f0fbe0da04b1e2c2f9846"
+      "bytes": 1776,
+      "sha256": "694ad1ea211040a50c57f1c761b2b95055b3f986b2e558b8f8ef7264a6b284ac"
     },
     {
       "path": "tests/cloudbase-core.test.mjs",

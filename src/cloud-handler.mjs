@@ -50,7 +50,8 @@ export async function main(event){
  const rawHeaders=event.headers||{},headers=new Headers();for(const [k,v] of Object.entries(rawHeaders))if(v!=null)headers.set(k,String(v));
  const host=headers.get('x-forwarded-host')||headers.get('host');if(!host)return {statusCode:400,headers:{'Content-Type':'application/json'},body:'{"error":"HTTP access required"}'};
  let pathname=event.path||event.rawPath||'/';if(!pathname.startsWith('/'))pathname='/'+pathname;
- const url=new URL(pathname,'https://'+host);for(const [k,v] of Object.entries(event.queryStringParameters||{}))if(v!=null)url.searchParams.set(k,String(v));
+ if(new URL('https://'+host).origin!==deployment.siteOrigin)return {statusCode:400,headers:{'Content-Type':'application/json'},body:'{"error":"Site address does not match the administrator configuration."}'};
+ const url=new URL(pathname,deployment.siteOrigin);for(const [k,v] of Object.entries(event.queryStringParameters||{}))if(v!=null)url.searchParams.set(k,String(v));
  const method=event.httpMethod||event.requestContext?.http?.method||'GET';
  const request=new Request(url,{method,headers,...(!['GET','HEAD'].includes(method)?{body:event.isBase64Encoded?Buffer.from(event.body||'','base64'):typeof event.body==='string'?event.body:JSON.stringify(event.body||{})}:{})});
  const response=await handle(request);const contentType=response.headers.get('content-type')||'';const binary=contentType.startsWith('image/');
