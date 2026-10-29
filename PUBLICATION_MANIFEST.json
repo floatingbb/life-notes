@@ -43,8 +43,8 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "bytes": 1872,
-      "sha256": "d40ad5389145883a0f559177ce29b31aa877f855f2e5f4e8bb076addc74308b6"
+      "bytes": 9830,
+      "sha256": "cd2d40e22d5a621f18b238626603e50eaf3276e211936a416279f53460f6168b"
     },
     {
       "path": "LICENSE",
@@ -73,8 +73,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3366,
-      "sha256": "ef5b3f697b7386c4bb0b2a9bef74ac5d3f8f1851cc0745b2b74226c134a098ef"
+      "bytes": 19758,
+      "sha256": "7b5e55ee54148a160c8c9d3a9a8c916f130b9d58fd402b81d264303e629359ab"
     },
     {
       "path": "scripts/build.mjs",
