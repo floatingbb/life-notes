@@ -65,3 +65,9 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 更新网页与函数代码时，保留自己的数据库、图片桶和 `SESSION_SECRET`。不要重新执行空库初始化来覆盖已有数据。改变会话密钥会使会话和已加密保存的邀请链接无法继续使用。
 
 云平台测试域名可能显示平台访问提示；自定义域名、备案、套餐限制及收费按平台当前规则处理。本仓库不会自动创建、付费或部署任何云资源。
+
+## 可靠性更新的部署
+
+依次应用 `cloudbase/migrations/20261029010000_record_pagination_indexes.sql`，更新云函数代码，最后更新静态文件。仅添加索引，不修改原始记录或 RLS。云函数超时建议至少 20 秒；SDK 单次请求超时 8 秒。更新时保留服务器 API Key、会话密钥、初始化令牌和已设置的管理员密码。
+
+如需要自动处理旧照片，可创建 `our-days-photo-maintenance` timer，按[备份与恢复说明](BACKUP_AND_RESTORE.md)配置。源代码不会替使用者自动开通或部署任何服务。

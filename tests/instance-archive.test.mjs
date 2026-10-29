@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {randomBytes} from 'node:crypto';
+import {collectArchive,encryptArchive,decryptArchive,restoreArchive} from '../src/instance-archive.mjs';
+const secret=randomBytes(32).toString('hex'),password=randomBytes(20).toString('hex'),photo='a'.repeat(64)+'.jpg';
+const values=new Map([['settings/owner',{hash:'synthetic hash',salt:'synthetic salt'}],['members/owner',{id:'owner',name:'示例管理员'}],['posts/example',{id:'example',author:'owner',body:'synthetic private content',images:[photo],deleted:'2026-01-01T00:00:00Z'}],['limits/test',{count:3}]]);
+const archive=await collectArchive({rows:async()=>[...values].map(([key,value])=>({key,value})),readPhoto:async()=>Buffer.from([255,216,255,217])},secret);assert.equal(archive.rows.length,3);
+const encrypted=encryptArchive(archive,password);assert.ok(!encrypted.includes(secret));assert.ok(!encrypted.includes('synthetic private content'));assert.deepEqual(decryptArchive(encrypted,password),archive);assert.throws(()=>decryptArchive(encrypted,'incorrect password'));
+const changed=JSON.parse(encrypted);changed.data='A'+changed.data.slice(1);assert.throws(()=>decryptArchive(JSON.stringify(changed),password));
+const target=new Map(),media=new Map(),adapter={get:async k=>target.get(k),rows:async()=>[...target].map(([key,value])=>({key,value})),insert:async(k,v)=>{if(target.has(k))return false;target.set(k,v);return true},uploadPhoto:async(k,v)=>media.set(k,v),finishRestore:async fingerprint=>target.set('settings/restore',{fingerprint,status:'complete'})};
+const result=await restoreArchive(adapter,archive);assert.equal(result.records,3);assert.equal(media.size,1);assert.equal(target.get('posts/example').deleted,values.get('posts/example').deleted);await restoreArchive(adapter,archive);assert.equal(target.size,4);
+target.set('posts/unrelated',{body:'do not overwrite'});await assert.rejects(()=>restoreArchive(adapter,archive),/refusing/);assert.equal(target.get('posts/unrelated').body,'do not overwrite');
+await assert.rejects(()=>restoreArchive({...adapter,get:async()=>null},archive),/NEW empty environment/);
+console.log('PASS: complete durable records and hidden-photo archive, authenticated encryption, wrong-password/tamper rejection, empty-target restore, resumable identical archive, preserved hidden records, and refusal to overwrite unrelated data.');

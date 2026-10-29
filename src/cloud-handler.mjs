@@ -1,19 +1,16 @@
+import {createRecordStore} from './cloud-store.mjs';
+import {createPhotoMaintenance} from './photo-maintenance.mjs';
 import cloudbase from '@cloudbase/js-sdk';
 import {createHash,randomBytes,scryptSync,timingSafeEqual} from 'node:crypto';
 import {createApp} from './core.mjs';
 import {cloudConfig} from './cloud-config.mjs';
 import {purgeUnusedPhotos} from './photo-cleanup.mjs';
 const deployment=cloudConfig(process.env);
-const app=cloudbase.init({env:deployment.envId,region:deployment.region,timeout:2400});
+const app=cloudbase.init({env:deployment.envId,region:deployment.region,timeout:8000});
 const db=app.rdb(),bucket=app.storage.from(deployment.photoBucket);
 const assert=(r,op)=>{if(r.error)throw Error(op+'_'+(r.error.code||'FAILED'));return r.data};
-const store={
- async removeMany(keys){if(keys.length)assert(await db.from('our_days_records').delete().in('key',keys),'DB_DELETE')},
- async setMany(rows){assert(await db.from('our_days_records').upsert(rows.map(([key,value])=>({key,value})),{onConflict:'key'}),'DB_WRITE')},
- async get(key){const data=assert(await db.from('our_days_records').select('value').eq('key',key).limit(1),'DB_GET');return data?.[0]?.value||null},
- async set(key,value){assert(await db.from('our_days_records').upsert({key,value},{onConflict:'key'}),'DB_WRITE')},
- async list(prefix){let all=[];for(let start=0;;start+=1000){const data=assert(await db.from('our_days_records').select('value').like('key',prefix+'%').order('key').range(start,start+999),'DB_LIST')||[];all.push(...data.map(d=>d.value));if(data.length<1000)break}return all}
-};
+const store=createRecordStore(db);
+const maintainPhotos=createPhotoMaintenance(store,bucket);
 const json=(v,s=200,h={})=>Response.json(v,{status:s,headers:{'Cache-Control':'no-store, private',...h}});
 function same(a,b){const x=Buffer.from(a),y=Buffer.from(b);return x.length===y.length&&timingSafeEqual(x,y)}
 export async function handle(request){
@@ -39,14 +36,24 @@ export async function handle(request){
  photoUrl:(p,i)=>'/api/photo/'+p.id+'/'+i,
  commentPhotoUrl:(p,c)=>'/api/photo/'+p.id+'/comments/'+c.id,
  async persistImages(images,previous){return Promise.all(images.map(async image=>{if(!image.startsWith('data:')){const index=previous.images.findIndex((_,i)=>'/api/photo/'+previous.id+'/'+i===image);if(index<0)throw Error('PHOTO_REFERENCE');return previous.images[index]}
- const bytes=Buffer.from(image.split(',')[1],'base64');if(bytes.length>160000)throw Error('PHOTO_TOO_LARGE');const key=createHash('sha256').update(randomBytes(16)).update(bytes).digest('hex')+'.jpg';const r=await bucket.upload(key,bytes,{contentType:'image/jpeg',upsert:true});assert(r,'PHOTO_UPLOAD');return key}))},
+ const bytes=Buffer.from(image.split(',')[1],'base64');if(bytes.length>160000)throw Error('PHOTO_TOO_LARGE');const key=createHash('sha256').update(randomBytes(16)).update(bytes).digest('hex')+'.jpg';await store.set('uploads/'+key,{images:[key],created:new Date().toISOString()});const r=await bucket.upload(key,bytes,{contentType:'image/jpeg',upsert:true});assert(r,'PHOTO_UPLOAD');return key}))},
  async purgePhotos(keys){await purgeUnusedPhotos(keys,{listPosts:()=>store.list('posts/'),listComments:()=>store.list('comments/'),removePhotos:async unused=>{assert(await bucket.remove(unused),'PHOTO_DELETE')}})},
+ cleanPhotos:maintainPhotos,
  async readPhoto(key){if(!/^[a-f0-9]{64}\.jpg$/.test(key))throw Error('PHOTO_KEY');const result=await bucket.download(key);const blob=assert(result,'PHOTO_DOWNLOAD');return Buffer.from(await blob.arrayBuffer())}
  };
  return createApp(store,config)(request);
 }
 export async function main(event){
  try{
+ // Operator-only event shape; HTTP requests cannot set top-level event fields.
+ if(event.Type==='OurDaysValidation'){const cursor={created:'2000-01-01T00:00:00.000Z',id:'synthetic-probe'};for(const [trash,filter]of [[false,'all'],[false,'family'],[true,'mine']]){const rows=await store.pagePosts('synthetic-probe',trash,cursor,1,filter,true);if(rows.length)throw Error('INVALID_PROBE_RESULT')}return {ok:true,paginationQueryVariants:3,noPrivateRowsRead:true}}
+ // The HTTP adapter wraps incoming JSON in event.body; it cannot set these fields.
+ if(event.Type==='Timer'&&event.TriggerName==='our-days-photo-maintenance'){
+  const old=await store.get('maintenance/photos');const result=await maintainPhotos(old?.cursor||'');
+  await store.set('maintenance/photos',{cursor:result.nextCursor||'',checked:new Date().toISOString(),scanned:result.scanned,removed:result.removed});
+  return {ok:true,scanned:result.scanned,removed:result.removed,hasMore:!!result.nextCursor};
+ }
+
  const rawHeaders=event.headers||{},headers=new Headers();for(const [k,v] of Object.entries(rawHeaders))if(v!=null)headers.set(k,String(v));
  const host=headers.get('x-forwarded-host')||headers.get('host');if(!host)return {statusCode:400,headers:{'Content-Type':'application/json'},body:'{"error":"HTTP access required"}'};
  let pathname=event.path||event.rawPath||'/';if(!pathname.startsWith('/'))pathname='/'+pathname;

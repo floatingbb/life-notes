@@ -1,7 +1,7 @@
 import {PDFDocument} from 'pdf-lib';
 
 type Entry={id:string,author:string,body:string,images:string[],scope:string,created:string,comments?:{author:string,body:string,created:string,image?:string}[]};
-type Journal={members:{id:string,name:string,displayName?:string}[],posts:Entry[]};
+type Journal={me?:string,members:{id:string,name:string,displayName?:string}[],posts:Entry[]};
 type Progress=(message:string)=>void;
 const W=1240,H=1754,M=94,BOTTOM=H-110;
 const ink='#343e34',muted='#737d6c',green='#61735a';
@@ -18,7 +18,7 @@ async function photoData(src:string){
 }
 export async function createJsonBackup(data:Journal,onProgress:Progress=()=>{}){
  const posts=[];for(const [i,p]of data.posts.entries()){onProgress(`正在整理第 ${i+1}/${data.posts.length} 则日记…`);const images=[];for(const src of p.images)images.push(await photoData(src));const comments=[];for(const c of p.comments||[])comments.push({...c,...(c.image?{image:await photoData(c.image)}:{})});posts.push({...p,images,...(p.comments?{comments}:{})})}
- return new Blob([JSON.stringify({application:'日子之间',exported:new Date().toISOString(),members:data.members,posts},null,2)],{type:'application/json'});
+ return new Blob([JSON.stringify({application:'日子之间',format:2,me:data.me,exported:new Date().toISOString(),members:data.members,posts},null,2)],{type:'application/json'});
 }
 
 // The browser supplies its installed Chinese font. Each A4 page is rendered
@@ -54,7 +54,7 @@ export async function createJournalPdf(data:Journal,onProgress:Progress=()=>{},r
   await text(who(p.author),29,green,true);await text(`${date(p.created)} · ${p.scope==='self'?'仅自己':p.scope==='selected'?'指定家人可见':'全家可见'}`,21,muted);y+=12;
   if(p.body)await text(p.body);
   for(const src of p.images)await picture(src);
-  if(p.comments?.length){await text('家人留下的话',22,muted,true);for(const c of p.comments){await text(`${who(c.author)}：${c.body}`,23);if(c.image)await picture(c.image)}}
+  if(p.comments?.length){await text('家人留下的话',22,muted,true);for(const c of p.comments){await text(`${(c as any).importedName||who(c.author)}：${c.body}`,23);if(c.image)await picture(c.image)}}
   y+=30;await pause();
  }
  await finishPage();onProgress('正在保存 PDF…');const bytes=await pdf.save();return new Blob([bytes as BlobPart],{type:'application/pdf'});

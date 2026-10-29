@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {createPhotoMaintenance} from '../src/photo-maintenance.mjs';
+const k=n=>n.repeat(64)+'.jpg',old=new Date(Date.now()-172800000).toISOString(),recent=new Date().toISOString(),removed=[],finished=[];
+const files=[{name:k('a'),created_at:old},{name:k('b'),updated_at:old},{name:k('c'),created_at:recent},{name:'unknown.dat',created_at:old},{name:k('d')}];
+const store={list:async p=>p==='posts/'?[{images:[k('b')],deleted:old}]:[{image:k('e')}],stalePhotoJobs:async()=>[{key:'photoJobs/example',value:{images:[k('e'),k('f')],created:old}}],removeMany:async keys=>finished.push(...keys)};
+const bucket={list:async(path,options)=>{assert.equal(options.cursor,'synthetic-cursor');assert.equal(options.limit,30);return {data:{objects:files,hasNext:true,nextCursor:'next-page'}}},remove:async keys=>{removed.push(...keys);return {data:[]}}};
+const result=await createPhotoMaintenance(store,bucket)('synthetic-cursor');assert.equal(result.nextCursor,'next-page');assert.deepEqual(removed,[k('a'),k('f')]);assert.deepEqual(finished,['photoJobs/example']);
+await assert.rejects(()=>createPhotoMaintenance(store,{...bucket,remove:async()=>({error:{code:'synthetic failure'}})})('synthetic-cursor'),/PHOTO_DELETE/);
+assert.equal(finished.length,1,'Failed storage cleanup must leave retry jobs');
+console.log('PASS: cursor-based storage scan, hidden/shared/comment references retained, recent/unknown-age/foreign files retained, stale unreferenced objects removed, and failed deletion leaves durable jobs.');

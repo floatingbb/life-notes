@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {createRequire} from 'node:module';
+import {createRecordStore} from '../src/cloud-store.mjs';
+const require=createRequire(import.meta.url),{generatePGClient}=require('@cloudbase/wx-cloud-client-sdk');
+const calls=[];let reply=[],failure=null;
+const db=generatePGClient({}, {pgBaseUrl:'https://database.test/rest/v1',fetch:async(url,options)=>{calls.push({url:new URL(String(url)),...options});return new Response(JSON.stringify(failure||reply),{status:failure?409:200,headers:{'content-type':'application/json'}})}})();
+const store=createRecordStore(db),previous={id:'synthetic',revision:1,body:'previous'};
+reply=[{key:'posts/synthetic'}];assert.equal(await store.compareWrite('posts/synthetic',previous,{...previous,revision:2}),true);let call=calls.at(-1);assert.equal(call.method,'PATCH');assert.equal(call.url.searchParams.get('value'),'eq.'+JSON.stringify(previous));assert.match(call.headers.get('Prefer'),/return=representation/);
+reply=[];assert.equal(await store.compareWrite('posts/synthetic',previous,{...previous,revision:2}),false);
+failure={code:'23505',message:'duplicate'};assert.equal(await store.compareWrite('posts/synthetic',null,previous),false);failure=null;
+await store.pagePosts('synthetic-member',false,{created:'2026-01-01T00:00:00.000Z',id:'synthetic-cursor'},31,'family');call=calls.at(-1);assert.equal(call.url.searchParams.get('limit'),'31');const or=call.url.searchParams.get('or');assert.match(or,/value->>deleted.is.null/);assert.match(or,/value->recipients.cs.\["synthetic-member"\]/);assert.match(or,/value->>author.neq.synthetic-member/);assert.match(or,/value->>created.lt.2026/);assert.equal(call.url.searchParams.get('order'),'value->>created.desc,value->>id.desc');
+await store.pagePosts('synthetic-member',true,null,31,'all');assert.match(calls.at(-1).url.searchParams.get('or'),/value->>deleted.not.is.null,value->>author.eq.synthetic-member/);
+await store.related('comments/',['synthetic-one','synthetic-two']);assert.equal(calls.at(-1).url.searchParams.get('value->>entry'),'in.(synthetic-one,synthetic-two)');
+console.log('PASS: actual SDK builds atomic JSON compare-and-update, duplicate-insert handling, permission-aware JSON queries, stable composite ordering, and entry-scoped comment queries without network access.');

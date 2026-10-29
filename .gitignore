@@ -24,3 +24,5 @@ coverage/
 cloudbaserc.json
 cloudbase.local.json
 .DS_Store
+
+*.ourdays

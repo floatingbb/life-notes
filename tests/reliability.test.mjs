@@ -1,0 +1,30 @@
+import assert from 'node:assert/strict';
+import {randomBytes,randomUUID} from 'node:crypto';
+import {createApp} from '../src/core.mjs';
+import {purgeUnusedPhotos} from '../src/photo-cleanup.mjs';
+const data=new Map(),photos=new Set();let number=0,failPhotos=false;
+const store={async get(k){return structuredClone(data.get(k)||null)},async set(k,v){data.set(k,structuredClone(v))},async list(prefix){return [...data].filter(([k])=>k.startsWith(prefix)).map(([,v])=>structuredClone(v))},async removeMany(keys){keys.forEach(k=>data.delete(k))},async compareWrite(k,p,n){if(JSON.stringify(data.get(k)||null)!==JSON.stringify(p))return false;data.set(k,structuredClone(n));return true}};
+const password=randomBytes(20).toString('hex'),handler=createApp(store,{ownerPassword:password,sessionSecret:randomBytes(32).toString('hex'),photoUrl:(p,i)=>'/api/photo/'+p.id+'/'+i,commentPhotoUrl:(p,c)=>'/api/photo/'+p.id+'/comments/'+c.id,async persistImages(images,prev){return images.map(x=>{if(x.startsWith('/api/'))return prev.images[Number(x.split('/').at(-1))];const k=(++number).toString(16).padStart(64,'0')+'.jpg';photos.add(k);return k})},async purgePhotos(keys){if(failPhotos)throw Error('synthetic storage outage');await purgeUnusedPhotos(keys,{listPosts:()=>store.list('posts/'),listComments:()=>store.list('comments/'),removePhotos:async keys=>keys.forEach(k=>photos.delete(k))})}});
+async function req(body,cookie='',route='diary',ip='unit-test'){return handler(new Request('https://days.test/api/'+route,{method:body?'POST':'GET',headers:{origin:'https://days.test',cookie,'x-real-ip':ip},...(body?{body:JSON.stringify(body)}:{})}))}
+const login={action:'login',type:'owner',password},cookie=(await req(login,'','access')).headers.get('set-cookie').split(';')[0];
+for(let i=0;i<40;i++)assert.equal((await req(login,'','access','success-only')).status,200);
+for(let i=0;i<25;i++)assert.equal((await req({...login,password:'incorrect'},'','access','wrong-password')).status,401);assert.equal((await req(login,'','access','wrong-password')).status,429);
+const note={action:'save',requestId:randomUUID(),body:'synthetic first note',images:[],scope:'self',recipients:[],mode:'comment',revision:0};
+const responses=await Promise.all([req(note,cookie),req(note,cookie)]);assert.deepEqual(responses.map(r=>r.status),[200,200]);assert.equal((await store.list('posts/')).length,1);let post=(await store.list('posts/'))[0];
+assert.equal((await req(note,cookie)).status,200);assert.equal((await store.list('posts/')).length,1);
+const edits=[{...note,id:post.id,revision:1,requestId:randomUUID(),body:'device one'},{...note,id:post.id,revision:1,requestId:randomUUID(),body:'device two'}];const changed=await Promise.all(edits.map(p=>req(p,cookie)));assert.deepEqual(changed.map(r=>r.status).sort(),[200,409]);post=await store.get('posts/'+post.id);assert.equal(post.revision,2);
+const jpg='data:image/jpeg;base64,/9j/2Q==';assert.equal((await req({...note,id:post.id,revision:2,requestId:randomUUID(),images:[jpg]},cookie)).status,200);post=await store.get('posts/'+post.id);const key=post.images[0];assert.ok(photos.has(key));
+assert.equal((await req({...note,id:post.id,revision:3,requestId:randomUUID(),images:[]},cookie)).status,200);assert.ok(!photos.has(key),'Editing away a photo cleans it immediately');
+failPhotos=true;assert.equal((await req({...note,id:post.id,revision:4,requestId:randomUUID(),images:[jpg]},cookie)).status,200);post=await store.get('posts/'+post.id);assert.equal((await req({...note,id:post.id,revision:5,requestId:randomUUID(),images:[]},cookie)).status,200);assert.ok((await store.list('photoJobs/')).length>0,'Storage failure leaves a durable cleanup job');failPhotos=false;
+// Pagination must preserve own/private/selected permissions and tied timestamps.
+for(let i=0;i<67;i++)await store.set('posts/page-'+i.toString().padStart(3,'0'),{id:'page-'+i.toString().padStart(3,'0'),author:i%2?'owner':'other',created:'2026-01-01T00:00:00.000Z',deleted:null,body:'page',images:[],scope:i%2?'self':'family',recipients:[],mode:'hug'});
+let cursor='',ids=[];do{const r=await req(null,cookie,'diary'+(cursor?'?cursor='+cursor:''));assert.equal(r.status,200);const p=await r.json();assert.ok(p.posts.length<=30);ids.push(...p.posts.map(p=>p.id));cursor=p.nextCursor||''}while(cursor);assert.equal(ids.length,68);assert.equal(new Set(ids).size,68);
+const otherPage=await(await req(null,cookie,'diary?filter=family')).json();assert.ok(otherPage.posts.every(p=>p.author!=='owner'));
+assert.equal((await req(null,cookie,'diary?cursor=invalid')).status,400);
+// Restore only creates caller-owned private copies and cannot mutate an existing live post.
+const source='b'.repeat(64),restore={action:'importPost',source,body:'backup original',images:[jpg],created:'2025-01-02T03:04:05Z',mode:'comment',hidden:false};
+const restored=await req(restore,cookie);assert.equal(restored.status,200);const restoredId=(await restored.json()).id;const saved=await store.get('posts/'+restoredId);assert.equal(saved.scope,'self');assert.equal(saved.author,'owner');const photoCount=photos.size;assert.equal((await req(restore,cookie)).status,200);assert.equal(photos.size,photoCount);
+const c={action:'importComment',id:restoredId,source:'c'.repeat(64),body:'backup comment',name:'示例亲友',image:jpg,created:'2025-01-03T00:00:00Z'};assert.equal((await req(c,cookie)).status,200);assert.equal((await req(c,cookie)).status,200);assert.equal((await store.list('comments/')).filter(c=>c.entry===restoredId).length,1);assert.equal((await req({...c,id:post.id},cookie)).status,403);
+const hidden=await req({...restore,source:'d'.repeat(64),hidden:true},cookie);assert.equal(hidden.status,200);assert.ok((await store.get('posts/'+(await hidden.json()).id)).deleted);
+assert.equal((await req({...restore,source:'../../bad'},cookie)).status,400);
+console.log('PASS: concurrent duplicate saves, CAS conflict prevention, successful vs failed login rate limits, removed-photo cleanup, durable retry jobs, permission-aware keyset pagination, backup restore privacy, image/comment retry deduplication, and hidden records.');

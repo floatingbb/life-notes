@@ -23,7 +23,7 @@ assert.equal((await request('diary',{...note('family'),id:selected.id},b)).statu
 assert.equal((await request('diary',{action:'delete',id:shared.id},b)).status,403);
 assert.equal((await request('diary',{action:'comment',id:shared.id,body:'not allowed'},b)).status,403);
 await request('diary',{action:'hug',id:shared.id},b);assert.equal((await snapshot(owner)).posts.find(p=>p.id===shared.id).embraced,true);
-await request('diary',{...note('family'),id:shared.id,mode:'comment'},owner);assert.equal((await request('diary',{action:'comment',id:shared.id,body:'今天做了好吃的'},b)).status,200);
+await request('diary',{...note('family'),id:shared.id,revision:shared.revision,mode:'comment'},owner);assert.equal((await request('diary',{action:'comment',id:shared.id,body:'今天做了好吃的'},b)).status,200);
 assert.equal((await snapshot(c)).posts[0].comments[0].body,'今天做了好吃的');
 await request('diary',{action:'delete',id:shared.id},owner);assert.equal((await snapshot(c)).posts.length,0);await request('diary',{action:'restore',id:shared.id},owner);assert.equal((await snapshot(c)).posts.length,1);
 assert.equal((await request('diary',{...note('self'),images:['data:image/svg+xml,bad']},owner)).status,400);

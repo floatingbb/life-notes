@@ -23,8 +23,8 @@
     },
     {
       "path": ".gitignore",
-      "bytes": 221,
-      "sha256": "6658d843af234fe6139f0f74275eba7fea5e92cfc83afd8b0c02bbc23bfc64b2"
+      "bytes": 232,
+      "sha256": "458dfdb5b233d0ba29a9a91077dba9929f8e53cf6f8a3026599d8a399b208a08"
     },
     {
       "path": "cloudbase/migrations/20261001000000_family_diary.sql",
@@ -32,9 +32,19 @@
       "sha256": "7b0b8dbfbe148e4aa102a6a2e03679ed976bb705aecdef9d93fe8d46ad56c0be"
     },
     {
+      "path": "cloudbase/migrations/20261029010000_record_pagination_indexes.sql",
+      "bytes": 644,
+      "sha256": "7b2c5ca8f2a1be1634c48bf58c1b7e81eaa9aefe58a1d034ab1b6e27eb919afb"
+    },
+    {
+      "path": "docs/BACKUP_AND_RESTORE.md",
+      "bytes": 5128,
+      "sha256": "2e9b7562ca0dd088cacd4b83cf1911b7118949d44e6e2a3af59da27fe1955992"
+    },
+    {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 4322,
-      "sha256": "d30130bc7f9f8f09d6625668338b94a0c2722f62a834c6811bf2fed6f2a588bd"
+      "bytes": 4905,
+      "sha256": "d5d0ff3e3055671fa934f94c1f6852e650d5e7bfa82df4a3aa64575808cb7a50"
     },
     {
       "path": "docs/PRIVACY_AUDIT.md",
@@ -48,8 +58,8 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "bytes": 9830,
-      "sha256": "cd2d40e22d5a621f18b238626603e50eaf3276e211936a416279f53460f6168b"
+      "bytes": 10812,
+      "sha256": "c1c313e42219b293339b13a6d947ac00af0c51f70ee67665d41917656e16ab7c"
     },
     {
       "path": "LICENSE",
@@ -73,13 +83,13 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 546,
-      "sha256": "4bd1ab1ddeaa26c78458acd004c0462f51998e8fa616f50b60eec424bca88f4e"
+      "bytes": 544,
+      "sha256": "2274377f45846748dbaca1bc55aab1361a35777c7e4bb48404310a0399e8eae9"
     },
     {
       "path": "README.md",
-      "bytes": 20300,
-      "sha256": "758a71f542a809b4528b2f648bf9bc46dcd4f562f55548586801fc26ae4271ad"
+      "bytes": 21420,
+      "sha256": "8c69232f2efa760a3ba240fced11766f60a7ce3c7fac3a5eab9f5886b24bf0f5"
     },
     {
       "path": "scripts/build.mjs",
@@ -90,6 +100,11 @@
       "path": "scripts/check-privacy.mjs",
       "bytes": 2404,
       "sha256": "c550786d881dc18200466ce4ffca783ea4d7c5c7c4d0b17666a9a4c824205dc6"
+    },
+    {
+      "path": "scripts/instance-backup.mjs",
+      "bytes": 3085,
+      "sha256": "493f319bf26645a3e5aa9dc5a012069d8ffbabacabc355c3ae007f850e07b786"
     },
     {
       "path": "SECURITY.md",
@@ -107,6 +122,11 @@
       "sha256": "4d3ecdce0e7153b7e1228f6bba949549e2e328a293bb906367833c0ee2b29aa2"
     },
     {
+      "path": "src/backup.ts",
+      "bytes": 3886,
+      "sha256": "97fdc29906a0610c5d68ce0a498b5c7b111d2c11cff441f294f3425d9819c78a"
+    },
+    {
       "path": "src/clock.ts",
       "bytes": 524,
       "sha256": "e64e1c033010a0e23e3e66d87fa1503b9de074b739de94cef69902f988efb791"
@@ -118,28 +138,38 @@
     },
     {
       "path": "src/cloud-handler.mjs",
-      "bytes": 6236,
-      "sha256": "5fd274e60d1de9fc4287ad1358421e452c4f80b5cc5c3dc75a5c313d7c3b0169"
+      "bytes": 6711,
+      "sha256": "a3adb8c91b4bd602971fde9f8bf70858670ccf1c1d15c1a48d2750f7f60009ef"
+    },
+    {
+      "path": "src/cloud-store.mjs",
+      "bytes": 2763,
+      "sha256": "bb46ebd3603dded5d991a65bca8aaed46aef5fc193c113841ab32b6aafb1aa0c"
     },
     {
       "path": "src/core.mjs",
-      "bytes": 16551,
-      "sha256": "110a7fcc8bc6fdda530e30b31960dfa07ba9d9f194a4a58d443d1e19c2c9eace"
+      "bytes": 19254,
+      "sha256": "4159adcc1f340e2b64d83667ef9b3791c0d2f18b046983de45946a957259e233"
     },
     {
       "path": "src/diary-request.ts",
-      "bytes": 1281,
-      "sha256": "8e4d2df115254712e9424cf4f359ddffc5dbc86826ed47a9016ed5f50d296fe7"
+      "bytes": 1359,
+      "sha256": "d772b20d9c6aafb20a051f4be92af1f76258d6a0505094a9f9682f813a835f7b"
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 29943,
-      "sha256": "d0fc235eb2710850c53b6458928b32bc8434afcb67f757680664bd295832f43c"
+      "bytes": 36619,
+      "sha256": "fde6fcd571098e0c6bc52654f5ffee7601fa4190aad7ec5e1f07319d87acd60f"
+    },
+    {
+      "path": "src/drafts.ts",
+      "bytes": 1143,
+      "sha256": "6fe4a24e88c4c00ef8df2bf09e1a1e5eab7c3df3a5ffd69e5df4d6e504be4715"
     },
     {
       "path": "src/export.ts",
-      "bytes": 6695,
-      "sha256": "5137180855a9c2f5b96d42654c9beb321a5e28efe5ef5d9289b0ccd92380fbf9"
+      "bytes": 6751,
+      "sha256": "63a5c4e0529d57c501c70f93cf54cecda5e741a3801a13f2cf3d9e1c2a9bdf46"
     },
     {
       "path": "src/gallery.ts",
@@ -150,6 +180,11 @@
       "path": "src/image.ts",
       "bytes": 1112,
       "sha256": "5f6c6f39ded1f726f448e5b764985b3b6b238602af21721a756905aa84b8996f"
+    },
+    {
+      "path": "src/instance-archive.mjs",
+      "bytes": 5466,
+      "sha256": "3bfb9e178ed5a4a33bf65fd4c427230887d04f707e26fbad7c2ee904d48371e5"
     },
     {
       "path": "src/invite-code.ts",
@@ -167,9 +202,24 @@
       "sha256": "14e5511001178d4156235a6cfa004b0ac0ae931bac36eb503a2d92b7b471d7f2"
     },
     {
+      "path": "src/photo-maintenance.mjs",
+      "bytes": 1557,
+      "sha256": "adc9b988c064de1135d727738dec90e4cdaeea1ecddc6d12397dc4f9d5d596c9"
+    },
+    {
       "path": "src/photo-viewer.tsx",
       "bytes": 3079,
       "sha256": "afa1f8fecc0591a4746c5ce6d1b3de8e263851e8594026d7419150342fec73fb"
+    },
+    {
+      "path": "src/record-pages.mjs",
+      "bytes": 1742,
+      "sha256": "20568362bb754ce5bce4423c6689ad73633c3d77948b9750f4f12d01e83a9ddc"
+    },
+    {
+      "path": "src/restore.mjs",
+      "bytes": 2089,
+      "sha256": "fbb6f61aef79895332585fa8b5c3867b4b2a6043591cf6c9e25cdd73abe6ff4a"
     },
     {
       "path": "src/setup-token.ts",
@@ -192,6 +242,11 @@
       "sha256": "37593e26206198cdffab2fcc74b2ba4b92e041785da77f52d9b3a2724fcef639"
     },
     {
+      "path": "tests/browser-data.test.mjs",
+      "bytes": 2221,
+      "sha256": "4da2f9ec7a222b687905476441426c2aad901a93b407732adb6872b1b7aac6a5"
+    },
+    {
       "path": "tests/clock-links.test.mjs",
       "bytes": 5349,
       "sha256": "d9a3d28935dce5c47353b405f5c3f64e92520feaaf3da364210000c28b1704fa"
@@ -202,9 +257,14 @@
       "sha256": "694ad1ea211040a50c57f1c761b2b95055b3f986b2e558b8f8ef7264a6b284ac"
     },
     {
+      "path": "tests/cloud-store.test.mjs",
+      "bytes": 2318,
+      "sha256": "6e7039f400eb08a43d8b5ba2f64eef3e5f9e1f906b0a57e51f67a9e8fc870d87"
+    },
+    {
       "path": "tests/cloudbase-core.test.mjs",
-      "bytes": 4532,
-      "sha256": "af3aedc5c487e84ea3c78b0794d5c784d6efb9a22c47c5ef0741df55af3e2f7a"
+      "bytes": 4557,
+      "sha256": "07ce4f64b96df70096bad8cdf1ca8079d5ad64c5766f01d22ec354a4b8b51dc6"
     },
     {
       "path": "tests/comment-purge.test.mjs",
@@ -222,14 +282,29 @@
       "sha256": "33ed391981a6014b00623f636b855a46691b744ffe6471d7200d5814fa2bc6eb"
     },
     {
+      "path": "tests/instance-archive.test.mjs",
+      "bytes": 2374,
+      "sha256": "d200f49c1857d0e1cf7015ac81d0e11b9d4ba7489c3a66c74e79e0488aedfb9f"
+    },
+    {
       "path": "tests/personal-names.test.mjs",
       "bytes": 4739,
       "sha256": "4afbfe29391f791ec76a54979dbb21df1cf01b5a4f2575c6e483296892f66692"
     },
     {
+      "path": "tests/photo-maintenance.test.mjs",
+      "bytes": 1543,
+      "sha256": "c366203311f0ac390bc68e27e9ee754fb0eac2a7d241822dda17248a85ca3011"
+    },
+    {
       "path": "tests/recycle-bin.test.mjs",
       "bytes": 4329,
       "sha256": "3a56be6a6328d68aadb069163121b5de54ad89cbad73a190c406df7edb43f254"
+    },
+    {
+      "path": "tests/reliability.test.mjs",
+      "bytes": 6109,
+      "sha256": "d987421ddbaed9a1d4cfbf361f2d1a059d7c2802d8a1a53017956fa79af31cd1"
     },
     {
       "path": "tests/setup-token.test.mjs",
