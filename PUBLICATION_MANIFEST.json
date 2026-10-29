@@ -283,8 +283,8 @@
     },
     {
       "path": "tests/instance-archive.test.mjs",
-      "bytes": 2374,
-      "sha256": "d200f49c1857d0e1cf7015ac81d0e11b9d4ba7489c3a66c74e79e0488aedfb9f"
+      "bytes": 2402,
+      "sha256": "935bd94028ecb6321390a0ea3ac11daf6fd0acdd28542cf8500ed0ce7655bab6"
     },
     {
       "path": "tests/personal-names.test.mjs",
