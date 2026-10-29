@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {cloudConfig} from '../src/cloud-config.mjs';
+assert.throws(()=>cloudConfig({}),/CLOUDBASE_ENV_ID/);
+assert.throws(()=>cloudConfig({CLOUDBASE_ENV_ID:'YOUR_NEW_ENV_ID'}),/CLOUDBASE_ENV_ID/);
+assert.throws(()=>cloudConfig({CLOUDBASE_ENV_ID:'isolated-test-env',CLOUDBASE_REGION:'bad'}),/REGION/);
+const env={CLOUDBASE_ENV_ID:'isolated-test-env',CLOUDBASE_REGION:'ap-shanghai',CLOUDBASE_APIKEY:'synthetic-test-key-'.repeat(4),SESSION_SECRET:'synthetic-test-session-'.repeat(4)};
+assert.deepEqual(cloudConfig(env),{envId:'isolated-test-env',region:'ap-shanghai',photoBucket:'our-days-photos'});
+assert.throws(()=>cloudConfig({...env,PHOTO_BUCKET:'../wrong'}),/PHOTO_BUCKET/);
+assert.throws(()=>cloudConfig({...env,SESSION_SECRET:''}),/SESSION_SECRET/);
+console.log('PASS: no implicit environment, no placeholder deployment, and explicit isolated runtime configuration required.');

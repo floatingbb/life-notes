@@ -1,0 +1,235 @@
+{
+  "format": 1,
+  "scope": "source-only independent deployment template",
+  "containsFamilyData": false,
+  "containsLiveCredentials": false,
+  "containsLiveEnvironmentBinding": false,
+  "automaticDeployment": false,
+  "files": [
+    {
+      "path": ".env.example",
+      "bytes": 216,
+      "sha256": "496e1f1b924b501a5de02df3b98d42fe53a655b0925015afdb8f4310d423b52d"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 19,
+      "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
+    },
+    {
+      "path": ".github/workflows/check.yml",
+      "bytes": 456,
+      "sha256": "b36c547ccecc1ffcfbad4c4e6235b5ce4845c27a722565add0928984e76b6536"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 221,
+      "sha256": "6658d843af234fe6139f0f74275eba7fea5e92cfc83afd8b0c02bbc23bfc64b2"
+    },
+    {
+      "path": "cloudbase/migrations/20261001000000_family_diary.sql",
+      "bytes": 434,
+      "sha256": "7b0b8dbfbe148e4aa102a6a2e03679ed976bb705aecdef9d93fe8d46ad56c0be"
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "bytes": 3705,
+      "sha256": "0927fa42a38e6b36fa306f75edd47135ade9677e703edff63e789f17c4f0b1ad"
+    },
+    {
+      "path": "docs/PRIVACY.md",
+      "bytes": 1675,
+      "sha256": "f01d4d6acd983af05eda1293403b603f541f24b0cdd4c7426ef3cc8df429c574"
+    },
+    {
+      "path": "docs/USER_GUIDE.md",
+      "bytes": 1872,
+      "sha256": "d40ad5389145883a0f559177ce29b31aa877f855f2e5f4e8bb076addc74308b6"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1078,
+      "sha256": "e98bac38bc0a0cace4e9a2de2a31ce352918ff103f10ab9a376b1ae1f3f9467c"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 43263,
+      "sha256": "6b81d9c9f7dace006f9312e6e715e02f6095d303645bc94cc922e307dcb27236"
+    },
+    {
+      "path": "package.json",
+      "bytes": 675,
+      "sha256": "283e8bdea205405effc86bd74f78109f34f1223954a6b2d070fcc8e817964bc9"
+    },
+    {
+      "path": "public/favicon.svg",
+      "bytes": 280,
+      "sha256": "6aa162c8d3ffa04b736d99d6f7cc3488f0575542e08df7a92a336cdfa3d5af2d"
+    },
+    {
+      "path": "public/index.html",
+      "bytes": 546,
+      "sha256": "4bd1ab1ddeaa26c78458acd004c0462f51998e8fa616f50b60eec424bca88f4e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3366,
+      "sha256": "ef5b3f697b7386c4bb0b2a9bef74ac5d3f8f1851cc0745b2b74226c134a098ef"
+    },
+    {
+      "path": "scripts/build.mjs",
+      "bytes": 1308,
+      "sha256": "d0736a1db4bcc65529d182e4b0d684b82ffba6dca80daad1c4bcecbc48391f82"
+    },
+    {
+      "path": "scripts/check-privacy.mjs",
+      "bytes": 2137,
+      "sha256": "2d7260f031c9276a58d66954f73d218187c6c08ba60f37e75edc7147392daff5"
+    },
+    {
+      "path": "SECURITY.md",
+      "bytes": 1070,
+      "sha256": "b035697f053b9310f3a0ffd3aa1c6610dd6794e2b303a91eb9588e52faae2a45"
+    },
+    {
+      "path": "src/avatar-crop.ts",
+      "bytes": 734,
+      "sha256": "5d40034b9e4d60acb684f312ffbfda74641c0cfeea5164bd0d81f0bbc6bc1646"
+    },
+    {
+      "path": "src/avatar-cropper.tsx",
+      "bytes": 5500,
+      "sha256": "4d3ecdce0e7153b7e1228f6bba949549e2e328a293bb906367833c0ee2b29aa2"
+    },
+    {
+      "path": "src/clock.ts",
+      "bytes": 524,
+      "sha256": "e64e1c033010a0e23e3e66d87fa1503b9de074b739de94cef69902f988efb791"
+    },
+    {
+      "path": "src/cloud-config.mjs",
+      "bytes": 832,
+      "sha256": "28285fa4a3eb916c841dd8c57189908e33a4b410b98b0c3fee1152f23ae7004c"
+    },
+    {
+      "path": "src/cloud-handler.mjs",
+      "bytes": 6021,
+      "sha256": "e4948a00b244d5c4605637ff7da4dc0bc3094ce16c24cb9c9dc3a3d127645898"
+    },
+    {
+      "path": "src/core.mjs",
+      "bytes": 16551,
+      "sha256": "110a7fcc8bc6fdda530e30b31960dfa07ba9d9f194a4a58d443d1e19c2c9eace"
+    },
+    {
+      "path": "src/diary-request.ts",
+      "bytes": 1281,
+      "sha256": "8e4d2df115254712e9424cf4f359ddffc5dbc86826ed47a9016ed5f50d296fe7"
+    },
+    {
+      "path": "src/diary.tsx",
+      "bytes": 29943,
+      "sha256": "d0fc235eb2710850c53b6458928b32bc8434afcb67f757680664bd295832f43c"
+    },
+    {
+      "path": "src/export.ts",
+      "bytes": 6695,
+      "sha256": "5137180855a9c2f5b96d42654c9beb321a5e28efe5ef5d9289b0ccd92380fbf9"
+    },
+    {
+      "path": "src/gallery.ts",
+      "bytes": 251,
+      "sha256": "cb087fb44237cb7c1ee2f5cc47720a4ded4f78205459c55a3b67a41d96d4a6e8"
+    },
+    {
+      "path": "src/image.ts",
+      "bytes": 1112,
+      "sha256": "5f6c6f39ded1f726f448e5b764985b3b6b238602af21721a756905aa84b8996f"
+    },
+    {
+      "path": "src/invite-code.ts",
+      "bytes": 289,
+      "sha256": "dd81d9eb78f9adf1d3b2bdcab87da8784f29a4fdc8421d1a9930a4a1ca7fd508"
+    },
+    {
+      "path": "src/main.tsx",
+      "bytes": 10577,
+      "sha256": "89d4c42fa6df78557ebc7b5930f3d23ef3b4eac5130e9c1b3edc7a425876c093"
+    },
+    {
+      "path": "src/photo-cleanup.mjs",
+      "bytes": 526,
+      "sha256": "14e5511001178d4156235a6cfa004b0ac0ae931bac36eb503a2d92b7b471d7f2"
+    },
+    {
+      "path": "src/photo-viewer.tsx",
+      "bytes": 3079,
+      "sha256": "afa1f8fecc0591a4746c5ce6d1b3de8e263851e8594026d7419150342fec73fb"
+    },
+    {
+      "path": "src/setup-token.ts",
+      "bytes": 338,
+      "sha256": "99ee623b09c71436a8a82cbb43a84c1b7e00e443e13570949c6b8a0dd682b4bb"
+    },
+    {
+      "path": "src/site-config.ts",
+      "bytes": 180,
+      "sha256": "6206282797f37dca8f10f0f917211de6276aacd18d42058c98a69f597115d3f0"
+    },
+    {
+      "path": "src/style.css",
+      "bytes": 39657,
+      "sha256": "a46bdc678a7dd5d9336f066ba5bc8b47de0c708116c3d4fa35ba5c853ec5e84d"
+    },
+    {
+      "path": "tests/avatars.test.mjs",
+      "bytes": 2718,
+      "sha256": "37593e26206198cdffab2fcc74b2ba4b92e041785da77f52d9b3a2724fcef639"
+    },
+    {
+      "path": "tests/clock-links.test.mjs",
+      "bytes": 5349,
+      "sha256": "d9a3d28935dce5c47353b405f5c3f64e92520feaaf3da364210000c28b1704fa"
+    },
+    {
+      "path": "tests/cloud-config.test.mjs",
+      "bytes": 924,
+      "sha256": "071ba663fa3d583482d006c9c71b409b9b4a177cb06f0fbe0da04b1e2c2f9846"
+    },
+    {
+      "path": "tests/cloudbase-core.test.mjs",
+      "bytes": 4532,
+      "sha256": "af3aedc5c487e84ea3c78b0794d5c784d6efb9a22c47c5ef0741df55af3e2f7a"
+    },
+    {
+      "path": "tests/comment-purge.test.mjs",
+      "bytes": 7022,
+      "sha256": "5c20e9364b181ab3d42d2ab64a9b56404c0853314f2dc17ef26a5d6d7177e243"
+    },
+    {
+      "path": "tests/crop-gallery.test.mjs",
+      "bytes": 2455,
+      "sha256": "98f5525c83b68ed5094b4c3b09ce86be01cdba510d5435eb19bb54f25b1ac566"
+    },
+    {
+      "path": "tests/diary-request.test.mjs",
+      "bytes": 3594,
+      "sha256": "33ed391981a6014b00623f636b855a46691b744ffe6471d7200d5814fa2bc6eb"
+    },
+    {
+      "path": "tests/personal-names.test.mjs",
+      "bytes": 4739,
+      "sha256": "4afbfe29391f791ec76a54979dbb21df1cf01b5a4f2575c6e483296892f66692"
+    },
+    {
+      "path": "tests/recycle-bin.test.mjs",
+      "bytes": 4329,
+      "sha256": "3a56be6a6328d68aadb069163121b5de54ad89cbad73a190c406df7edb43f254"
+    },
+    {
+      "path": "tests/setup-token.test.mjs",
+      "bytes": 1020,
+      "sha256": "d2e020c3209b332ab4141bdf9617178d02dc6efe8c9db77fb3d62b27f0612fd2"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "our-days-family-journal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A private mobile-friendly family journal. Deploy your own instance.",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check:privacy": "node scripts/check-privacy.mjs"
+  },
+  "dependencies": {
+    "@cloudbase/js-sdk": "3.10.3",
+    "@cloudbase/signature-nodejs": "2.2.2",
+    "lucide-react": "1.31.0",
+    "pdf-lib": "1.17.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.0",
+    "typescript": "5.9.3"
+  }
+}

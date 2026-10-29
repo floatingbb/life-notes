@@ -1,0 +1,16 @@
+import {readFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import assert from 'node:assert/strict';
+const require=createRequire(new URL('../package.json',import.meta.url));
+const ts=require('typescript');
+const source=readFileSync(new URL('../src/setup-token.ts',import.meta.url),'utf8');
+const js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext}}).outputText;
+const {parseSetupToken}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
+const token='a'.repeat(64);
+assert.equal(parseSetupToken('https://days.example/#setup='+token),token);
+assert.equal(parseSetupToken('#setup='+token),token);
+assert.equal(parseSetupToken(token),token);
+assert.equal(parseSetupToken('https://days.example/'),'');
+assert.equal(parseSetupToken('#join='+token),'');
+assert.equal(parseSetupToken('#setup=wrong'),'');
+console.log('PASS: setup links and tab recovery tokens parse correctly; missing and malformed tokens stay blocked.');

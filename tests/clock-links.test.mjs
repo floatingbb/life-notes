@@ -1,0 +1,54 @@
+import {createApp} from '../src/core.mjs';
+import {randomBytes,createHash} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {createRequire} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {build} from 'esbuild';
+import assert from 'node:assert/strict';
+const values=new Map(),store={async get(k){return structuredClone(values.get(k)||null)},async set(k,v){values.set(k,structuredClone(v))},async setMany(rows){for(const [k,v]of rows)await this.set(k,v)},async list(p){return [...values].filter(([k])=>k.startsWith(p)).map(([,v])=>structuredClone(v))}};
+const password=randomBytes(24).toString('hex'),secret=randomBytes(32).toString('hex'),config={ownerPassword:password,sessionSecret:secret,secure:true};let handler=createApp(store,config);
+async function req(body,cookie='',route='access'){return handler(new Request('https://days.test/api/'+route,{method:body?'POST':'GET',headers:{origin:'https://days.test',cookie,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})}))}
+const cookie=r=>r.headers.get('set-cookie').split(';')[0];
+const owner=cookie(await req({action:'login',type:'owner',password}));
+async function invite(name){const r=await req({action:'invite',name},owner);assert.equal(r.status,200);return r.json()}
+const a=await invite('妈妈'),b=await invite('爷爷'),id=a.member.id;
+let family=cookie(await req({action:'login',type:'family',code:a.code}));
+assert.equal((await req({action:'getInvite',id},family)).status,403);
+assert.equal((await req({action:'listMembers'},family)).status,403);
+assert.equal((await (await req({action:'getInvite',id},owner)).json()).code,a.code);
+assert.ok(!JSON.stringify([...values]).includes(a.code),'Retained link must be encrypted at rest');
+assert.equal((await req({action:'saveInvite',id,code:b.code},owner)).status,400,'Cannot store another member link');
+values.delete('links/'+id);
+assert.equal((await req({action:'getInvite',id},owner)).status,404);
+assert.equal((await req({action:'saveInvite',id,code:a.code},owner)).status,200);
+assert.equal((await (await req({action:'getInvite',id},owner)).json()).code,a.code);
+assert.equal((await req({action:'save',body:'自己的日子',images:[],scope:'family',recipients:[],mode:'hug'},family,'diary')).status,200);
+assert.equal((await req({action:'profile',name:'妈妈的新名字'},family,'diary')).status,200);
+handler=createApp(store,config); // Code redeploy retains existing links and sessions.
+assert.equal((await req(null,family,'diary')).status,200);
+assert.equal((await (await req({action:'getInvite',id},owner)).json()).code,a.code);
+assert.equal((await req({action:'regenerateInvite',id},owner)).status,400);
+const rotated=await (await req({action:'regenerateInvite',id,confirm:true},owner)).json();assert.notEqual(rotated.code,a.code);
+assert.equal((await req(null,family,'diary')).status,401);
+assert.equal((await req({action:'login',type:'family',code:a.code})).status,401);
+family=cookie(await req({action:'login',type:'family',code:rotated.code}));
+const diary=await (await req(null,family,'diary')).json();assert.equal(diary.me,id);assert.equal(diary.posts.length,1);assert.equal(diary.posts[0].author,id);
+const members=await (await req({action:'listMembers'},owner)).json();assert.ok(!JSON.stringify(members).includes(rotated.code));
+assert.equal((await req({action:'revoke',id},owner)).status,200);
+assert.ok(!(await (await req({action:'listMembers'},owner)).json()).members.some(m=>m.id===id),'Revoked members disappear');
+assert.equal((await req(null,family,'diary')).status,401);
+assert.equal((await req({action:'getInvite',id},owner)).status,404);
+assert.equal((await req({action:'login',type:'family',code:rotated.code})).status,401);
+const require=createRequire(new URL('../package.json',import.meta.url)),ts=require('typescript');
+async function load(name){const result=await build({entryPoints:[fileURLToPath(new URL('../src/'+name,import.meta.url))],bundle:true,write:false,format:'esm',platform:'node'});return import('data:text/javascript;base64,'+Buffer.from(result.outputFiles[0].contents).toString('base64'))}
+const {clockFace,FAMILY_ZONES}=await load('clock.ts'),{parseInviteCode}=await load('invite-code.ts');
+assert.deepEqual(FAMILY_ZONES.map(z=>z.zone),['Asia/Shanghai','UTC']);
+const instant=new Date('2026-10-28T19:22:00Z'),china=clockFace(instant,'Asia/Shanghai'),chicago=clockFace(instant,'America/Chicago');
+assert.equal(china.time,'03:22');assert.equal(china.daytime,false);assert.match(china.date,/29/);
+assert.equal(chicago.time,'14:22');assert.equal(chicago.daytime,true);assert.match(chicago.date,/28/);
+assert.equal(clockFace(new Date('2026-07-01T12:00:00Z'),'America/Chicago').time,'07:00');
+assert.equal(clockFace(new Date('2026-12-01T12:00:00Z'),'America/Chicago').time,'06:00');
+assert.equal(clockFace(new Date('2026-03-08T07:59:00Z'),'America/Chicago').time,'01:59');
+assert.equal(clockFace(new Date('2026-03-08T08:00:00Z'),'America/Chicago').time,'03:00');
+assert.equal(parseInviteCode('https://days.test/#join='+a.code),a.code);assert.equal(parseInviteCode(a.code),a.code);assert.equal(parseInviteCode('#setup=bad'),'');
+console.log('PASS: clocks, dates, Chicago DST, encrypted member-bound link retrieval, legacy link validation, redeploy compatibility, regeneration preserving diary, revoked member removal and invalidation.');

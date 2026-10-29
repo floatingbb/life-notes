@@ -1,0 +1,36 @@
+import {createApp} from '../src/core.mjs';
+import {purgeUnusedPhotos} from '../src/photo-cleanup.mjs';
+import {randomBytes,randomUUID} from 'node:crypto';
+import assert from 'node:assert/strict';
+const values=new Map(),photos=new Set(),removed=[],knownKeys=['a','b','c','d','e'].map(x=>x.repeat(64)+'.jpg');let failPhoto=false,failDb=false,nextPhoto=0;
+const store={async get(k){return structuredClone(values.get(k)||null)},async set(k,v){values.set(k,structuredClone(v))},async list(p){return [...values].filter(([k])=>k.startsWith(p)).map(([,v])=>structuredClone(v))},async removeMany(keys){if(failDb&&keys.some(k=>k.startsWith('posts/')))throw Error('simulated DB error');for(const k of keys)values.delete(k)}};
+const password=randomBytes(24).toString('hex'),config={ownerPassword:password,sessionSecret:randomBytes(32).toString('hex'),photoUrl:(p,i)=>'/api/photo/'+p.id+'/'+i,commentPhotoUrl:(p,c)=>'/api/photo/'+p.id+'/comments/'+c.id,async persistImages(images){return images.map(()=>{const k=knownKeys[nextPhoto++];photos.add(k);return k})},async readPhoto(k){assert.ok(photos.has(k));return Uint8Array.from([255,216,255,217])},async purgePhotos(keys){await purgeUnusedPhotos(keys,{listPosts:()=>store.list('posts/'),listComments:()=>store.list('comments/'),async removePhotos(keys){if(failPhoto)throw Error('simulated photo error');removed.push(...keys);for(const k of keys)photos.delete(k)}})}};
+const handler=createApp(store,config);
+async function req(body,cookie='',route='diary',origin='https://days.test'){return handler(new Request('https://days.test/api/'+route,{method:body?'POST':'GET',headers:{origin,cookie,'content-type':'application/json'},...(body?{body:JSON.stringify(body)}:{})}))}
+const cookie=r=>r.headers.get('set-cookie').split(';')[0],owner=cookie(await req({action:'login',type:'owner',password},'','access'));
+const invite=await(await req({action:'invite',name:'妈妈'},owner,'access')).json(),family=cookie(await req({action:'login',type:'family',code:invite.code},'','access'));
+const outsider=await(await req({action:'invite',name:'爸爸'},owner,'access')).json(),other=cookie(await req({action:'login',type:'family',code:outsider.code},'','access'));
+const jpg='data:image/jpeg;base64,/9j/2Q==';
+const id=randomUUID(),keepId=randomUUID();await store.set('posts/'+id,{id,author:'owner',body:'原日记',images:[knownKeys[0]],scope:'selected',recipients:[invite.member.id],mode:'comment',created:new Date().toISOString(),deleted:null});photos.add(knownKeys[0]);nextPhoto=1;
+assert.equal((await req({action:'comment',id,body:'看到了',image:jpg},family)).status,200);const comment=(await store.list('comments/'))[0];assert.equal(comment.image,knownKeys[1]);assert.equal(comment.body,'看到了');
+const snap=await(await req(null,family)).json(),url=snap.posts[0].comments[0].image;assert.equal(url,'/api/photo/'+id+'/comments/'+comment.id);assert.ok(!JSON.stringify(snap).includes(knownKeys[1]));
+assert.equal((await req(null,family,url.slice(5))).status,200);assert.equal((await req(null,other,url.slice(5))).status,404);assert.equal((await req(null,'',url.slice(5))).status,401);
+assert.equal((await req(null,family,'photo/'+id+'/comments/'+randomUUID())).status,404);
+assert.equal((await req({action:'comment',id,body:'',image:jpg},family)).status,200,'Picture-only reply');
+for(const image of ['https://evil.test/p.jpg','data:image/svg+xml,<svg/>','data:image/jpeg;base64,'+'a'.repeat(205001),[jpg]])assert.equal((await req({action:'comment',id,body:'bad',image},family)).status,400);
+assert.equal((await req({action:'comment',id,body:'',image:''},family)).status,400);
+assert.equal((await req({action:'comment',id,body:'bad',image:jpg},other)).status,404);
+assert.equal((await req({action:'purge',id,confirm:true},owner)).status,409,'Active records cannot be purged');
+await req({action:'delete',id},owner);assert.equal((await req(null,family,url.slice(5))).status,404);assert.equal((await req(null,owner,url.slice(5))).status,200,'Parent author can preview hidden comment photo');
+assert.equal((await req({action:'comment',id,body:'hidden',image:jpg},family)).status,404);
+assert.equal((await req({action:'purge',id,confirm:true},family)).status,403);assert.equal((await req({action:'purge',id},owner)).status,400);assert.equal((await req({action:'purge',id,confirm:true},owner,'diary','https://evil.test')).status,403);
+await store.set('posts/'+keepId,{id:keepId,author:invite.member.id,body:'另一篇仍在用同一张旧照片',images:[knownKeys[0]],scope:'self',recipients:[],mode:'hug',created:new Date().toISOString(),deleted:new Date().toISOString()});
+failPhoto=true;const purged=await req({action:'purge',id,confirm:true},owner);assert.equal(purged.status,503);assert.equal((await purged.json()).pendingCleanup,true);assert.equal(await store.get('posts/'+id),null);assert.equal((await store.list('comments/')).length,0);assert.ok(await store.get('purges/'+id));
+const pending=await(await req(null,owner,'diary?view=trash')).json();assert.equal(pending.pendingPurges[0].id,id);assert.ok(!JSON.stringify(pending.pendingPurges).includes(knownKeys[1]));assert.equal((await(await req(null,family,'diary?view=trash')).json()).pendingPurges.length,0);
+assert.equal((await req({action:'purge',id,confirm:true},family)).status,403);assert.equal((await req(null,owner,url.slice(5))).status,404);
+failPhoto=false;assert.equal((await req({action:'purge',id,confirm:true},owner)).status,200);assert.ok(photos.has(knownKeys[0]),'Another hidden diary keeps shared photo');assert.ok(!photos.has(knownKeys[1]));assert.ok(!photos.has(knownKeys[2]));assert.equal(await store.get('purges/'+id),null);assert.equal((await req({action:'restore',id},owner)).status,404);
+// Failed database deletion must not remove photos; restoring cancels its pending intent.
+const dbId=randomUUID();photos.add(knownKeys[3]);await store.set('posts/'+dbId,{id:dbId,author:'owner',body:'数据库失败时保留',images:[knownKeys[3]],scope:'self',recipients:[],mode:'hug',created:new Date().toISOString(),deleted:new Date().toISOString()});failDb=true;assert.equal((await req({action:'purge',id:dbId,confirm:true},owner)).status,503);assert.ok(await store.get('posts/'+dbId));assert.ok(photos.has(knownKeys[3]));failDb=false;assert.equal((await req({action:'restore',id:dbId},owner)).status,200);assert.equal(await store.get('purges/'+dbId),null);
+await assert.rejects(()=>purgeUnusedPhotos(['../bad'],{listPosts:async()=>[],removePhotos:async()=>assert.fail('Invalid keys never reach storage')}),/PHOTO_KEY/);
+const keepCommentPhoto=knownKeys[4];let cleaned=false;await purgeUnusedPhotos([keepCommentPhoto],{listPosts:async()=>[],listComments:async()=>[{image:keepCommentPhoto}],removePhotos:async()=>{cleaned=true}});assert.equal(cleaned,false);
+console.log('PASS: optional comment pictures, private image routes, image-only replies, validation, hidden/foreign permissions, confirmed purge, comment-image cloud cleanup, shared references, visible cleanup retry, DB failure safety, and non-restorability.');
