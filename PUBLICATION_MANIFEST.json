@@ -43,8 +43,8 @@
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 4905,
-      "sha256": "d5d0ff3e3055671fa934f94c1f6852e650d5e7bfa82df4a3aa64575808cb7a50"
+      "bytes": 5247,
+      "sha256": "68ef3a3f42ac336ddad092ea9bc4973f30bad412a7c3c668be29c7f3d4eea00f"
     },
     {
       "path": "docs/PRIVACY_AUDIT.md",
@@ -83,8 +83,8 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 544,
-      "sha256": "2274377f45846748dbaca1bc55aab1361a35777c7e4bb48404310a0399e8eae9"
+      "bytes": 670,
+      "sha256": "021c64b8f03fcf6502ecb9dc44ec335d415733a56c593babb353a71c0069db2f"
     },
     {
       "path": "README.md",
@@ -93,8 +93,8 @@
     },
     {
       "path": "scripts/build.mjs",
-      "bytes": 1308,
-      "sha256": "d0736a1db4bcc65529d182e4b0d684b82ffba6dca80daad1c4bcecbc48391f82"
+      "bytes": 1509,
+      "sha256": "10e673f0df40e97ce19ea5f52165a71d86c30067c8b544a140d936022bbfd0e4"
     },
     {
       "path": "scripts/check-privacy.mjs",
@@ -138,8 +138,8 @@
     },
     {
       "path": "src/cloud-handler.mjs",
-      "bytes": 6711,
-      "sha256": "a3adb8c91b4bd602971fde9f8bf70858670ccf1c1d15c1a48d2750f7f60009ef"
+      "bytes": 6792,
+      "sha256": "f514d3cd0131ed74f85feafb0207bbeca1540f9f6f155bd6d4c3ab22f2758828"
     },
     {
       "path": "src/cloud-store.mjs",
@@ -148,8 +148,8 @@
     },
     {
       "path": "src/core.mjs",
-      "bytes": 19254,
-      "sha256": "4159adcc1f340e2b64d83667ef9b3791c0d2f18b046983de45946a957259e233"
+      "bytes": 19474,
+      "sha256": "66b30086769c56a1cb0ca15b9780a141bae44639b487c4812b8110017321e425"
     },
     {
       "path": "src/diary-request.ts",
@@ -158,8 +158,8 @@
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 36619,
-      "sha256": "fde6fcd571098e0c6bc52654f5ffee7601fa4190aad7ec5e1f07319d87acd60f"
+      "bytes": 36984,
+      "sha256": "0f1086e315305ed9a3680b3042b30c5fbe7be3668ba5316fedfba7919004177c"
     },
     {
       "path": "src/drafts.ts",
@@ -193,8 +193,8 @@
     },
     {
       "path": "src/main.tsx",
-      "bytes": 10577,
-      "sha256": "89d4c42fa6df78557ebc7b5930f3d23ef3b4eac5130e9c1b3edc7a425876c093"
+      "bytes": 10666,
+      "sha256": "78e236dda8bd06f9222140d4b3f626cd819cc13c977b30107b1f9b8998e47f14"
     },
     {
       "path": "src/photo-cleanup.mjs",
@@ -285,6 +285,11 @@
       "path": "tests/instance-archive.test.mjs",
       "bytes": 2402,
       "sha256": "935bd94028ecb6321390a0ea3ac11daf6fd0acdd28542cf8500ed0ce7655bab6"
+    },
+    {
+      "path": "tests/opening.test.mjs",
+      "bytes": 2806,
+      "sha256": "8f7f6735dfcae897884491d77bd10e88513c468dbeb6eb93502b7131832d77b5"
     },
     {
       "path": "tests/personal-names.test.mjs",

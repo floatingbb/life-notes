@@ -71,3 +71,7 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 依次应用 `cloudbase/migrations/20261029010000_record_pagination_indexes.sql`，更新云函数代码，最后更新静态文件。仅添加索引，不修改原始记录或 RLS。云函数超时建议至少 20 秒；SDK 单次请求超时 8 秒。更新时保留服务器 API Key、会话密钥、初始化令牌和已设置的管理员密码。
 
 如需要自动处理旧照片，可创建 `our-days-photo-maintenance` timer，按[备份与恢复说明](BACKUP_AND_RESTORE.md)配置。源代码不会替使用者自动开通或部署任何服务。
+
+## 首次打开速度
+
+主程序不再包含 PDF 生成工具。请完整上传 `dist/public/`，包括新增的 `export-tools.js`；遗漏它会导致导出失败。导出工具只在点击导出时加载。首次登录状态和第一页日记由一个经过权限检查的请求读取，不在浏览器持久保存日记或登录凭据。

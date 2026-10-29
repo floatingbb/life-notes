@@ -71,8 +71,8 @@ export function createApp(store,config){
  }
  if(path.startsWith('/api/photo/')&&req.method==='GET'&&config.readPhoto){const me=await authenticate(req);if(!me)return json({error:'请先登录'},401);const parts=path.split('/'),id=parts[3];if(!validId(id))return json({error:'照片不存在'},404);const p=await store.get('posts/'+id);if(!p||(p.deleted?p.author!==me.id:!canSee(p,me.id)))return json({error:'照片不可访问'},404);let key;if(parts.length===6&&parts[4]==='comments'&&validId(parts[5])){const c=await store.get('comments/'+parts[5]);if(c?.entry===p.id)key=c.image}else if(parts.length===5){const index=Number(parts[4]);if(Number.isInteger(index)&&index>=0&&index<=2)key=p.images[index]}if(!key)return json({error:'照片不存在'},404);const bytes=await config.readPhoto(key);return new Response(bytes,{headers:{'Content-Type':'image/jpeg','Cache-Control':'no-store, private','X-Content-Type-Options':'nosniff'}});}
  if(path!=='/api/diary')return json({error:'页面不存在'},404);
- const me=await authenticate(req);if(!me)return json({error:'请先登录'},401);
- if(req.method==='GET'){const q=new URL(req.url).searchParams;return json(await snapshot(me,q.get('view')==='trash',{cursor:q.get('cursor'),filter:q.get('filter'),limit:30}))}
+ const me=await authenticate(req);if(!me){if(req.method==='GET'&&new URL(req.url).searchParams.get('bootstrap')==='1')return json({authenticated:false});return json({error:'请先登录'},401)}
+ if(req.method==='GET'){const q=new URL(req.url).searchParams,result=await snapshot(me,q.get('view')==='trash',{cursor:q.get('cursor'),filter:q.get('filter'),limit:30});return json({...result,...(q.get('bootstrap')==='1'?{authenticated:true,admin:me.id==='owner',name:me.name}:{})})}
  const b=await body(req),id=me.id;
  if(['importPost','importComment'].includes(b.action))return json(await importBackup(store,config,me,b));
  if(b.action==='cleanPhotos'){if(id!=='owner')return json({error:'仅管理员可清理云端照片'},403);if(!config.cleanPhotos)return json({error:'此部署暂不支持清理'},503);return json(await config.cleanPhotos(b.cursor||''))}

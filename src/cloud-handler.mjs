@@ -18,7 +18,7 @@ export async function handle(request){
  if(path==='/api/health')return json({application:'our-days',status:'online'});
  const owner=await store.get('settings/owner');
  if(!owner){
- if(path==='/api/access'&&request.method==='GET')return json({authenticated:false,needsSetup:true});
+ if(request.method==='GET'&&(path==='/api/access'||path==='/api/diary'&&new URL(request.url).searchParams.get('bootstrap')==='1'))return json({authenticated:false,needsSetup:true});
  if(path==='/api/access'&&request.method==='POST'){
  if(request.headers.get('origin')!==new URL(request.url).origin)return json({error:'请求来源不匹配'},403);
  const raw=await request.text();if(raw.length>5000)return json({error:'请求太大'},413);const b=JSON.parse(raw);
