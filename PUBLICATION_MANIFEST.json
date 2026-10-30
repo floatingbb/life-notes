@@ -93,8 +93,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 22795,
-      "sha256": "0dbd1dc9985661f858d1b1c634cb3bb6809ea5c5c2ef60c13e01a91bacba6a33"
+      "bytes": 22909,
+      "sha256": "b5a5f22b07d4ceabc9c12ea2f5769466229f5b7747702cae94a391aa2143e83a"
     },
     {
       "path": "scripts/build.mjs",
@@ -113,8 +113,8 @@
     },
     {
       "path": "SECURITY.md",
-      "bytes": 1070,
-      "sha256": "b035697f053b9310f3a0ffd3aa1c6610dd6794e2b303a91eb9588e52faae2a45"
+      "bytes": 1199,
+      "sha256": "2fbcec13e7dff4ec2f89a7e5f690c455fdf2162ec220a99ca70343a6cc2b7771"
     },
     {
       "path": "src/api-read.ts",
