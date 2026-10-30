@@ -1,8 +1,9 @@
+import {readJson} from './api-read';
 import {sendDiary} from './diary-request';
 export async function readJournal(includeTrash=false,onProgress:(s:string)=>void=()=>{}){
  let result:any=null;const posts:any[]=[];
  for(const view of includeTrash?['active','trash']:['active']){
-  let cursor='',seen=new Set<string>();do{const q=new URLSearchParams();if(view==='trash')q.set('view','trash');if(cursor)q.set('cursor',cursor);const r=await fetch('/api/diary?'+q,{cache:'no-store'}),d=await r.json();if(!r.ok)throw Error(d.error||'读取失败，请稍后重试');result=result||d;posts.push(...d.posts);onProgress(`已读取 ${posts.length} 则记录…`);cursor=d.nextCursor||'';if(cursor&&seen.has(cursor))throw Error('翻页读取失败，请重新导出');seen.add(cursor)}while(cursor);
+  let cursor='',seen=new Set<string>();do{const q=new URLSearchParams();if(view==='trash')q.set('view','trash');if(cursor)q.set('cursor',cursor);const d=await readJson('/api/diary?'+q);result=result||d;posts.push(...d.posts);onProgress(`已读取 ${posts.length} 则记录…`);cursor=d.nextCursor||'';if(cursor&&seen.has(cursor))throw Error('翻页读取失败，请重新导出');seen.add(cursor)}while(cursor);
  }
  return {...result,posts:[...new Map(posts.map(p=>[p.id,p])).values()]};
 }

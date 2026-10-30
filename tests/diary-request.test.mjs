@@ -1,9 +1,8 @@
 import {readFileSync} from 'node:fs';
-import {createRequire} from 'node:module';
+import {build} from 'esbuild';
 import assert from 'node:assert/strict';
 import {createApp} from '../src/core.mjs';
-const require=createRequire(new URL('../package.json',import.meta.url)),ts=require('typescript');
-const source=readFileSync('src/diary-request.ts','utf8'),js=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2020,module:ts.ModuleKind.ESNext}}).outputText;
+const built=await build({entryPoints:['src/diary-request.ts'],bundle:true,write:false,platform:'node',format:'esm'}),js=built.outputFiles[0].text;
 const {diaryRequest,sendDiary}=await import('data:text/javascript;base64,'+Buffer.from(js).toString('base64'));
 const images=['data:image/jpeg;base64,'+'a'.repeat(190000),'data:image/jpeg;base64,'+'b'.repeat(190000)],payload={action:'save',body:'全家都能看到的日子 ❤️',images,scope:'family',recipients:[],mode:'comment'};
 const options=diaryRequest(payload);assert.equal(options.headers['Content-Type'],'application/octet-stream');assert.ok(options.body instanceof Blob);assert.ok(options.body.size>100000);assert.deepEqual(JSON.parse(await options.body.text()),payload);
@@ -15,7 +14,7 @@ const origin='https://days.test';const login=await app(new Request(origin+'/api/
 const saved=await app(new Request(origin+'/api/diary',{...options,headers:{...options.headers,origin,cookie}}));assert.equal(saved.status,200);assert.deepEqual(savedImages,images);const post=[...records].find(([k])=>k.startsWith('posts/'))[1];assert.equal(post.scope,'family');assert.equal(post.mode,'comment');assert.equal(post.body,payload.body);
 const originalFetch=globalThis.fetch;try{let called;
 globalThis.fetch=async(url,init)=>{called=init;return Response.json({ok:true})};assert.equal((await sendDiary(payload)).ok,true);assert.equal(called.headers['Content-Type'],'application/octet-stream');
-for(const [status,body,pattern]of [[413,{code:'EXCEED_MAX_PAYLOAD_SIZE'},/内容过大/],[429,{},/频繁/],[401,{},/登录已过期/],[504,{},/内容还在/],[403,{error:'没有权限'},/没有权限/]]){globalThis.fetch=async()=>Response.json(body,{status});await assert.rejects(()=>sendDiary(payload),pattern)}
+for(const [status,body,pattern]of [[413,{code:'EXCEED_MAX_PAYLOAD_SIZE'},/内容过大/],[429,{},/访问限制/],[401,{},/登录已过期/],[504,{},/内容还在/],[403,{error:'没有权限'},/没有权限/]]){globalThis.fetch=async()=>Response.json(body,{status});await assert.rejects(()=>sendDiary(payload),pattern)}
 globalThis.fetch=async()=>{throw Error('Load failed')};await assert.rejects(()=>sendDiary(payload),/网络连接中断/);
 globalThis.fetch=async()=>new Response('<html>bad gateway</html>',{status:502});await assert.rejects(()=>sendDiary(payload),/服务器暂时没有正常回应/);
 }finally{globalThis.fetch=originalFetch}

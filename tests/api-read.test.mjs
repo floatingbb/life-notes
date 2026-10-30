@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+const built=await build({entryPoints:['src/api-read.ts'],bundle:true,write:false,format:'esm',platform:'node'}),{createApiReader,apiError}=await import('data:text/javascript;base64,'+Buffer.from(built.outputFiles[0].text).toString('base64'));
+let calls=0;const waits=[],reader=createApiReader({fetch:async()=>{calls++;return calls<3?Response.json({code:'EXCEED_RATELIMIT'},{status:429}):Response.json({posts:['synthetic']})},wait:async ms=>waits.push(ms)});
+const a=reader('/api/diary'),b=reader('/api/diary');assert.equal(a,b,'Concurrent reads share only the in-flight request');assert.deepEqual(await a,{posts:['synthetic']});assert.equal(calls,3);assert.deepEqual(waits,[1000,2000]);await reader('/api/diary');assert.equal(calls,4,'Private contents must not be cached after the request');
+let forbidden=0;const noRetry=createApiReader({fetch:async()=>{forbidden++;return Response.json({error:'private'},{status:403})},wait:async()=>assert.fail('Forbidden reads must not retry')});await assert.rejects(()=>noRetry('/api/diary'),/private/);assert.equal(forbidden,1);
+let broken=0;const network=createApiReader({fetch:async()=>{broken++;throw Error('synthetic network failure')},wait:async()=>{}});await assert.rejects(()=>network('/api/diary'),/当前输入/);assert.equal(broken,3);
+const retryAfter=[];let step=0;const honoring=createApiReader({fetch:async()=>++step===1?new Response('temporary',{status:503,headers:{'Retry-After':'500'}}):Response.json({ok:true}),wait:async ms=>retryAfter.push(ms)});await honoring('/api/diary');assert.ok(retryAfter.every(ms=>ms<=5000));
+assert.match(apiError(429,{message:'technical client details'}).message,/网站的访问限制/);assert.ok(!apiError(429).message.includes('操作频繁'));assert.equal(apiError(409,{error:'conflict',conflict:true}).conflict,true);
+console.log('PASS: bounded read retries, shared in-flight reads, no persistent private cache, forbidden reads never retry, bounded network failure, retry delays, and accurate rate-limit explanations.');

@@ -43,8 +43,8 @@
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 5247,
-      "sha256": "68ef3a3f42ac336ddad092ea9bc4973f30bad412a7c3c668be29c7f3d4eea00f"
+      "bytes": 5985,
+      "sha256": "38ecc8e8890c567d893336156f5dd25b3da0c7a2b6597d1fdf4ff23f504a411f"
     },
     {
       "path": "docs/PRIVACY_AUDIT.md",
@@ -68,13 +68,13 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 43263,
-      "sha256": "6b81d9c9f7dace006f9312e6e715e02f6095d303645bc94cc922e307dcb27236"
+      "bytes": 62518,
+      "sha256": "4b559c5e8324d65057226b3b704bbf37b8e0a399e43db6a1d59cc3f0f0b058b4"
     },
     {
       "path": "package.json",
-      "bytes": 675,
-      "sha256": "283e8bdea205405effc86bd74f78109f34f1223954a6b2d070fcc8e817964bc9"
+      "bytes": 698,
+      "sha256": "d9ed44ceba68b220ae1689ad912b579010908d07b00b9120ce4f0ae60537478c"
     },
     {
       "path": "public/favicon.svg",
@@ -83,8 +83,8 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 670,
-      "sha256": "021c64b8f03fcf6502ecb9dc44ec335d415733a56c593babb353a71c0069db2f"
+      "bytes": 668,
+      "sha256": "81ab208bef50a5a4d20251f71f559cbf5c06b8883cb46024213e2ad749b83f73"
     },
     {
       "path": "README.md",
@@ -112,6 +112,11 @@
       "sha256": "b035697f053b9310f3a0ffd3aa1c6610dd6794e2b303a91eb9588e52faae2a45"
     },
     {
+      "path": "src/api-read.ts",
+      "bytes": 2371,
+      "sha256": "db53097d15fe8fe46145a96bad6ba04c858d0de26c16d4a6b2ed21be0f018998"
+    },
+    {
       "path": "src/avatar-crop.ts",
       "bytes": 734,
       "sha256": "5d40034b9e4d60acb684f312ffbfda74641c0cfeea5164bd0d81f0bbc6bc1646"
@@ -123,8 +128,8 @@
     },
     {
       "path": "src/backup.ts",
-      "bytes": 3886,
-      "sha256": "97fdc29906a0610c5d68ce0a498b5c7b111d2c11cff441f294f3425d9819c78a"
+      "bytes": 3826,
+      "sha256": "5c5e32d5475b20a82b5e29d261e70b99c8f764291e082fe835f66ca2b9f1ce7b"
     },
     {
       "path": "src/clock.ts",
@@ -152,14 +157,19 @@
       "sha256": "66b30086769c56a1cb0ca15b9780a141bae44639b487c4812b8110017321e425"
     },
     {
+      "path": "src/diary-card.tsx",
+      "bytes": 2184,
+      "sha256": "63f8559c27f98fc9acf4a075c336ae611e85a3d1b6ab45cb14d53db050b26e22"
+    },
+    {
       "path": "src/diary-request.ts",
-      "bytes": 1359,
-      "sha256": "d772b20d9c6aafb20a051f4be92af1f76258d6a0505094a9f9682f813a835f7b"
+      "bytes": 954,
+      "sha256": "e25e45a7c0ad952bf0ce0953d94fc18c106d8c5be6d945e0c56aa5f81eaf32c5"
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 36984,
-      "sha256": "0f1086e315305ed9a3680b3042b30c5fbe7be3668ba5316fedfba7919004177c"
+      "bytes": 35424,
+      "sha256": "ea47bd886b79d21aa44a8159713a68528b4957cc6a94b591808b2bb06c9edf8e"
     },
     {
       "path": "src/drafts.ts",
@@ -193,8 +203,8 @@
     },
     {
       "path": "src/main.tsx",
-      "bytes": 10666,
-      "sha256": "78e236dda8bd06f9222140d4b3f626cd819cc13c977b30107b1f9b8998e47f14"
+      "bytes": 10970,
+      "sha256": "9ddb8b4981694d19b285a7637e7bd701ab7e0ec8b5f817473eb5d46f1d351c32"
     },
     {
       "path": "src/photo-cleanup.mjs",
@@ -237,6 +247,11 @@
       "sha256": "a46bdc678a7dd5d9336f066ba5bc8b47de0c708116c3d4fa35ba5c853ec5e84d"
     },
     {
+      "path": "tests/api-read.test.mjs",
+      "bytes": 2084,
+      "sha256": "57aaf3a8034802d8406e08db5f6e40dfee11433a07d1b72c351c29a428bbc49b"
+    },
+    {
       "path": "tests/avatars.test.mjs",
       "bytes": 2718,
       "sha256": "37593e26206198cdffab2fcc74b2ba4b92e041785da77f52d9b3a2724fcef639"
@@ -245,6 +260,11 @@
       "path": "tests/browser-data.test.mjs",
       "bytes": 2221,
       "sha256": "4da2f9ec7a222b687905476441426c2aad901a93b407732adb6872b1b7aac6a5"
+    },
+    {
+      "path": "tests/card-stability.test.mjs",
+      "bytes": 3867,
+      "sha256": "975552808e676e7dbfe69bd4fdde40d4956684cb0b97ba7dee739d6e72779134"
     },
     {
       "path": "tests/clock-links.test.mjs",
@@ -278,8 +298,8 @@
     },
     {
       "path": "tests/diary-request.test.mjs",
-      "bytes": 3594,
-      "sha256": "33ed391981a6014b00623f636b855a46691b744ffe6471d7200d5814fa2bc6eb"
+      "bytes": 3460,
+      "sha256": "f4c05a98c081e011d911166953b3a7c9b6196b5f6d4c735fcac6e68dd2639586"
     },
     {
       "path": "tests/instance-archive.test.mjs",
