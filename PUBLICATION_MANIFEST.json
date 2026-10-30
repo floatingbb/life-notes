@@ -88,8 +88,8 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 672,
-      "sha256": "1060507e30c64d896f749fc347679de9f604c9c48d200e9cf057f2088b96a6d1"
+      "bytes": 676,
+      "sha256": "56a35a279ec79061e887eb011d5d74d13d61af84477623e55436692652af9e7d"
     },
     {
       "path": "README.md",
@@ -173,8 +173,8 @@
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 43841,
-      "sha256": "3d74c8fe1c9768f1f410abf5481833c2fec2379fed82f6dd720a70871aa6366d"
+      "bytes": 43795,
+      "sha256": "0b86308f9e947127164715919f24cf29b582ce859ccdb5276674439f4ec8213f"
     },
     {
       "path": "src/drafts.ts",
