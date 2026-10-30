@@ -2,7 +2,7 @@ import {createCipheriv,createDecipheriv,createHash,randomBytes,scryptSync} from 
 const digest=b=>createHash('sha256').update(b).digest('hex');
 const canonical=v=>JSON.stringify(normalize(v));
 function normalize(v){if(Array.isArray(v))return v.map(normalize);if(v&&typeof v==='object')return Object.fromEntries(Object.keys(v).sort().map(k=>[k,normalize(v[k])]));return v}
-const allowed=/^(?:settings\/owner|members\/[A-Za-z0-9_-]+|access\/[a-f0-9]{64}|links\/[A-Za-z0-9_-]+|remarks\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+|posts\/[A-Za-z0-9_-]+|comments\/[A-Za-z0-9_-]+|hugs\/[A-Za-z0-9_-]+)$/;
+const allowed=/^(?:settings\/owner|activity\/[A-Za-z0-9_-]+|favorites\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+|members\/[A-Za-z0-9_-]+|access\/[a-f0-9]{64}|links\/[A-Za-z0-9_-]+|remarks\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+|posts\/[A-Za-z0-9_-]+|comments\/[A-Za-z0-9_-]+|hugs\/[A-Za-z0-9_-]+)$/;
 export function validateArchive(archive){
  if(archive?.format!=='our-days-instance-v1'||typeof archive.sessionSecret!=='string'||archive.sessionSecret.length<32||!Array.isArray(archive.rows)||!Array.isArray(archive.photos))throw Error('Invalid instance backup');
  const keys=new Set();for(const row of archive.rows){if(!row||!allowed.test(row.key)||keys.has(row.key)||!row.value||typeof row.value!=='object')throw Error('Invalid or duplicate record in instance backup');keys.add(row.key)}

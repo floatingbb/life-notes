@@ -1,12 +1,15 @@
 export function createRecordStore(db){
 const assert=(r,op)=>{if(r.error)throw Error(op+'_'+(r.error.code||'FAILED'));return r.data};
 return {
+ async memoryMonths(id,o){return (assert(await db.rpc('our_days_memory_months',{p_viewer:id,p_search:o.search||'',p_author:o.author||'',p_favorites:!!o.favorites}),'DB_MONTHS')||[]).map(r=>r.month)},
+ async activity(id,since,until){return assert(await db.rpc('our_days_activity',{p_viewer:id,p_since:since,p_until:until}),'DB_ACTIVITY')},
  async stalePhotoJobs(){const r=assert(await db.from('our_days_records').select('key,value').or('key.like.photoJobs/%,key.like.uploads/%').lt('value->>created',new Date(Date.now()-86400000).toISOString()).order('key').limit(5),'DB_JOBS');return r||[]},
  async compareWrite(key,previous,value){
   if(!previous){const r=await db.from('our_days_records').insert({key,value});if(r.error?.code==='23505')return false;assert(r,'DB_INSERT');return true}
   const rows=assert(await db.from('our_days_records').update({value}).eq('key',key).eq('value',JSON.stringify(previous)).select('key'),'DB_COMPARE');return rows?.length===1;
  },
- async pagePosts(id,trash,after,limit,filter,probe=false){
+ async pagePosts(id,trash,after,limit,filter,probe=false,options={}){
+  if(options.memory)return (assert(await db.rpc('our_days_memory_page',{p_viewer:id,p_limit:limit,p_cursor_created:after?.created||null,p_cursor_id:after?.id||null,p_month:options.month||'all',p_search:options.search||'',p_author:options.author||'',p_favorites:!!options.favorites}),'DB_MEMORY')||[]).map(r=>r.value);
   const rules=[trash?'value->>deleted.not.is.null':'value->>deleted.is.null'];
   if(trash||filter==='mine')rules.push('value->>author.eq.'+id);
   else {rules.push('or(value->>author.eq.'+id+',value->>scope.eq.family,and(value->>scope.eq.selected,value->recipients.cs.["'+id+'"]))');if(filter==='family')rules.push('value->>author.neq.'+id)}

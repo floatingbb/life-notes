@@ -46,7 +46,7 @@ export async function handle(request){
 export async function main(event){
  try{
  // Operator-only event shape; HTTP requests cannot set top-level event fields.
- if(event.Type==='OurDaysValidation'){const cursor={created:'2000-01-01T00:00:00.000Z',id:'synthetic-probe'};for(const [trash,filter]of [[false,'all'],[false,'family'],[true,'mine']]){const rows=await store.pagePosts('synthetic-probe',trash,cursor,1,filter,true);if(rows.length)throw Error('INVALID_PROBE_RESULT')}return {ok:true,paginationQueryVariants:3,noPrivateRowsRead:true}}
+ if(event.Type==='OurDaysValidation'){const cursor={created:'2000-01-01T00:00:00.000Z',id:'synthetic-probe'};for(const [trash,filter]of [[false,'all'],[false,'family'],[true,'mine']]){const rows=await store.pagePosts('synthetic-probe',trash,cursor,1,filter,true);if(rows.length)throw Error('INVALID_PROBE_RESULT')}const memories=await store.pagePosts('synthetic-probe',false,null,1,'all',false,{memory:true,month:'0000-00',search:'',author:'',favorites:false});const months=await store.memoryMonths('synthetic-probe',{search:'x'.repeat(5001),author:'synthetic-probe'});const activity=await store.activity('synthetic-probe','9999-01-01T00:00:00.000Z','0001-01-01T00:00:00.000Z');if(memories.length||months.length||Number(activity.newPosts)||Number(activity.newReplies))throw Error('INVALID_MEMORY_PROBE');return {ok:true,paginationQueryVariants:3,memoryQueries:3,noPrivateRowsRead:true}}
  // The HTTP adapter wraps incoming JSON in event.body; it cannot set these fields.
  if(event.Type==='Timer'&&event.TriggerName==='our-days-photo-maintenance'){
   const old=await store.get('maintenance/photos');const result=await maintainPhotos(old?.cursor||'');

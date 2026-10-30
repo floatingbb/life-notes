@@ -15,5 +15,6 @@ for(const [w,h]of [[4032,3024],[3024,4032],[1,2000],[2000,1],[160,160],[50,80]])
 assert.throws(()=>cropGeometry(0,10,1,{x:0,y:0}),/尺寸/);
 assert.equal(swipeDirection(-90,12),1);assert.equal(swipeDirection(90,-12),-1);assert.equal(swipeDirection(30,0),0);assert.equal(swipeDirection(50,90),0);assert.equal(swipeDirection(0,90),0);
 assert.equal(slideIndex(1,1,3),2);assert.equal(slideIndex(1,-1,3),0);assert.equal(slideIndex(0,-1,3),0);assert.equal(slideIndex(2,1,3),2);assert.equal(slideIndex(0,1,1),0);
-const diary=readFileSync('src/diary.tsx','utf8');assert.ok(diary.includes('openPhotos(p.images,i)'));assert.ok(diary.includes('AvatarCropper'));assert.ok(!diary.includes('{lightbox&&'));
+const diary=readFileSync('src/diary.tsx','utf8');assert.ok(diary.includes('openPhotos(p.images,i,p.revision||0)'));assert.ok(diary.includes('AvatarCropper'));assert.ok(!diary.includes('{lightbox&&'));
 console.log('PASS: square/portrait/landscape circle crop alignment, zoom and drag boundaries, swipe direction vs vertical movement, selected-photo start, and gallery edge handling.');
+

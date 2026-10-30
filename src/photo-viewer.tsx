@@ -1,3 +1,4 @@
+import RetryImage from './retry-image';
 import {useEffect,useRef,useState} from 'react';
 import {X,ChevronLeft,ChevronRight} from 'lucide-react';
 import {swipeDirection,slideIndex} from './gallery';
@@ -25,7 +26,7 @@ export default function PhotoViewer({images,initialIndex,onClose}:{images:string
    const s=start.current;start.current=null;
    if(s?.id===e.pointerId){const dx=e.clientX-s.x,dy=e.clientY-s.y;ignoreClick.current=s.image||Math.abs(dx)>12||Math.abs(dy)>12;const direction=swipeDirection(dx,dy);if(direction)move(direction)}
   }} onPointerCancel={()=>{start.current=null;ignoreClick.current=true}}>
-   <img key={images[index]} src={images[index]} draggable={false} alt={'生活照片，第'+(index+1)+'张，共'+images.length+'张'} onDragStart={e=>e.preventDefault()}/>
+   <RetryImage key={images[index]} src={images[index]} loading="eager" alt={'生活照片，第'+(index+1)+'张，共'+images.length+'张'}/>
   </div>
   {images.length>1&&<>
    <button className="viewer-prev" disabled={index===0} aria-label="上一张照片" onClick={()=>move(-1)}><ChevronLeft size={30}/></button>
