@@ -47,14 +47,19 @@
       "sha256": "ea484511d11aca7221afdb1239832fb8377c9aecc4f82b3ce99bfc63e5666fd2"
     },
     {
+      "path": "cloudbase/migrations/20261030030000_thread_read_notifications.sql",
+      "bytes": 2325,
+      "sha256": "bcd2f91008e4febb91efb6e57a4720d100efe1c35f54b3812f049b0ec13e8746"
+    },
+    {
       "path": "docs/BACKUP_AND_RESTORE.md",
       "bytes": 5128,
       "sha256": "2e9b7562ca0dd088cacd4b83cf1911b7118949d44e6e2a3af59da27fe1955992"
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 7118,
-      "sha256": "2aa3ea2286234308fe07065eaf7871b75a5ea5c8d0e4969f67c1b593211bb293"
+      "bytes": 7550,
+      "sha256": "caa93eb88871e338445beb2434e334d846e38e751c85ff0075c657289d723890"
     },
     {
       "path": "docs/PRIVACY_AUDIT.md",
@@ -68,8 +73,8 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "bytes": 12124,
-      "sha256": "5085969d6b5c22701db499d6e11c0b6f9b80c5e50c62ca71dcfa64db9cf17095"
+      "bytes": 12427,
+      "sha256": "5b1042c9b7e7894241c3c18990f6bfb09458be63058247352aa63b372b63fc8e"
     },
     {
       "path": "LICENSE",
@@ -93,13 +98,13 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 692,
-      "sha256": "d413f6148f794c3d0d44a008d43e6c34610e5bd6ee225463be6af5460f7e9c9e"
+      "bytes": 683,
+      "sha256": "297f3c92d2534c32acd322e47fff6042d530ef0e72ad250b2d6ff86c93ba3348"
     },
     {
       "path": "README.md",
-      "bytes": 22969,
-      "sha256": "2771411709faea21e4800258166b4d25d0bedc58c0ace2c844d855b55169df4e"
+      "bytes": 23272,
+      "sha256": "9339c76e47d8a85f563a2d1686b4f6534a71c8f11226e61b0e6e23d903b1848b"
     },
     {
       "path": "scripts/build.mjs",
@@ -163,8 +168,8 @@
     },
     {
       "path": "src/core.mjs",
-      "bytes": 21474,
-      "sha256": "956849ea198c7ed04fc8a61e6e88ee7a44eefcbfc07d231cb944031690f61206"
+      "bytes": 22310,
+      "sha256": "3c13c929dc079463cf01062cd7805699b12c4668884518945e51cafc27955bb1"
     },
     {
       "path": "src/diary-card.tsx",
@@ -178,8 +183,8 @@
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 43887,
-      "sha256": "c52428db3e47884b439660392bcdb3f56ea08402db61cb688a249d68050316ca"
+      "bytes": 44618,
+      "sha256": "2e8f481075418eee748cc053389f7989bfee65b8395c66794ac379734827086f"
     },
     {
       "path": "src/drafts.ts",
@@ -218,8 +223,8 @@
     },
     {
       "path": "src/journal-query.mjs",
-      "bytes": 2477,
-      "sha256": "41ce70edeeb2bfd4789784d22d00c80a5602656ce78c6f813cdab5e99e6370fd"
+      "bytes": 2665,
+      "sha256": "71ceb4affd679736c78053cbc977a7bacfd59deac5bb769332b862a4825f2204"
     },
     {
       "path": "src/main.tsx",
@@ -275,6 +280,11 @@
       "path": "tests/api-read.test.mjs",
       "bytes": 2084,
       "sha256": "57aaf3a8034802d8406e08db5f6e40dfee11433a07d1b72c351c29a428bbc49b"
+    },
+    {
+      "path": "tests/automatic-read.test.mjs",
+      "bytes": 3448,
+      "sha256": "f1fa6bba546fb40df9c4931f6403a695ccf15a4cbccd1e325ab613e7b6cb3c9d"
     },
     {
       "path": "tests/avatars.test.mjs",
@@ -338,8 +348,8 @@
     },
     {
       "path": "tests/memory-ui.test.mjs",
-      "bytes": 4624,
-      "sha256": "baeed92eb9f67cdd0a802ca634792952b672d60efcf9d86d9c4a9f8551e9b653"
+      "bytes": 5764,
+      "sha256": "1acb5f1bf8fef7b464798505e210618a0d6d1aeb1d4c61f8e7d30e628b92d758"
     },
     {
       "path": "tests/opening.test.mjs",
@@ -363,8 +373,8 @@
     },
     {
       "path": "tests/reading-experience.test.mjs",
-      "bytes": 5248,
-      "sha256": "d4d1d865004c5b2d67b4c24b1a4b693814ef4733d9372840fee77ae2efb27eda"
+      "bytes": 5599,
+      "sha256": "af677ec297624f08403f8de8257dc1a522e05b47d9f4f4dc0206e68a6efc778e"
     },
     {
       "path": "tests/recycle-bin.test.mjs",

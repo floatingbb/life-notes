@@ -91,3 +91,7 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 ## 评论参与者的站内提示
 
 应用 `cloudbase/migrations/20261030020000_participant_comment_notifications.sql` 后，帖子作者和在新评论之前已经评论过该帖的家人，都会收到其他人新增评论的站内提示。不会重复计算自己此前的多条留言，不提示自己的新评论，不因首次参与而追溯提示更早的评论。帖子的当前查看权限、收起状态和现有提示清除时间继续生效。评论仍平铺显示，不新增评论回复栏。
+
+### 按帖子自动清除已读提醒
+
+已有实例先应用 `20261030030000_thread_read_notifications.sql`，再部署后端和前端。每个账号的 `activity/<id>` 内保存 `entrySeen`，打开帖子成功后用读取前的服务器时间推进这篇的截止时间；后到的评论和其他未看的帖子保留。更新使用比较写入以合并多设备操作，手动全部已读仍保留。无须新增定时任务。

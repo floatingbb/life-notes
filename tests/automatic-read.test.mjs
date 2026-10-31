@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {randomBytes} from 'node:crypto';
+import {createApp} from '../src/core.mjs';
+const rows=new Map(),store={get:async k=>structuredClone(rows.get(k)||null),set:async(k,v)=>rows.set(k,structuredClone(v)),list:async p=>[...rows].filter(([k])=>k.startsWith(p)).map(([,v])=>structuredClone(v))};
+const password=randomBytes(24).toString('hex'),app=createApp(store,{ownerPassword:password,sessionSecret:randomBytes(32).toString('hex')});
+let cookie='';async function req(url,body){return app(new Request('https://days.test/api/'+url,{method:body?'POST':'GET',headers:{origin:'https://days.test',cookie},...(body?{body:JSON.stringify(body)}:{})}))}
+cookie=(await req('access',{action:'login',type:'owner',password})).headers.get('set-cookie').split(';')[0];
+const at=n=>'2026-01-01T00:00:'+String(n).padStart(2,'0')+'.000Z';
+await store.set('activity/owner',{seenAt:at(0)});
+for(const id of ['a','b'])await store.set('posts/'+id,{id,author:'owner',scope:'family',recipients:[],body:'synthetic',images:[],mode:'comment',created:at(0),deleted:null});
+for(let i=1;i<=35;i++)await store.set('comments/c'+i,{id:'c'+i,entry:i<=33?'a':'b',author:'other',body:'synthetic',created:at(i)});
+let news=await(await req('diary?view=activity')).json();assert.equal(news.newReplies,35);assert.equal(news.items.length,30);
+const detail=await(await req('diary?entry=a')).json();assert.ok(Number.isFinite(Date.parse(detail.readAt)));assert.equal(detail.posts[0].comments.length,33);
+news=await(await req('diary',{action:'activitySeen',entry:'a',until:at(33)})).json();assert.equal(news.newReplies,2,'All 33 loaded comments clear, including notifications outside the 30-item preview');assert.ok(news.items.every(i=>i.entry==='b'));
+news=await(await req('diary?view=activity')).json();assert.equal(news.newReplies,2,'Read state survives another device/session request');
+await store.set('comments/new',{id:'new',entry:'a',author:'other',created:at(40),body:'new arrival'});
+news=await(await req('diary?view=activity')).json();assert.equal(news.newReplies,3,'Later arrivals on a read thread are still unread');
+await req('diary',{action:'activitySeen',entry:'a',until:at(20)});assert.equal((await store.get('activity/owner')).entrySeen.a,at(33),'Older device reads cannot rewind the cutoff');
+await req('diary',{action:'activitySeen',entry:'b',until:at(35)});assert.equal((await store.get('activity/owner')).entrySeen.a,at(33),'Reading another thread preserves the previous thread cutoff');
+await req('diary',{action:'activitySeen',until:at(30)});assert.equal((await store.get('activity/owner')).entrySeen.b,at(35),'Global acknowledgement preserves later per-thread reads');
+assert.equal((await req('diary',{action:'activitySeen',entry:'missing',until:at(35)})).status,404);
+assert.equal((await req('diary',{action:'activitySeen',entry:'../a',until:at(35)})).status,400);
+assert.equal((await req('diary',{action:'activitySeen',entry:'a',until:'2999-01-01T00:00:00Z'})).status,400);
+await req('diary',{action:'activitySeen',until:at(40)});assert.equal((await(await req('diary?view=activity')).json()).newReplies,0);
+assert.deepEqual((await store.get('activity/owner')).entrySeen,{},'Obsolete per-thread cutoffs are pruned when clearing all');
+console.log('PASS: per-thread automatic reads persist, preserve unseen threads and future arrivals, cover more than 30 notices, reject invalid reads, and never rewind other-device state.');
