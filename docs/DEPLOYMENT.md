@@ -87,3 +87,7 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
 部署新版前，应用 `cloudbase/migrations/20261030010000_memories_and_activity.sql`。新函数只授权 service_role，经服务器签名会话识别账号后查询；浏览器账号不能直接指定他人的身份调用。更新顺序为迁移、云函数、静态文件。
 
 新增账号私有键包括 `favorites/<member>/<post>` 与 `activity/<member>`。加密整站备份工具包含这两类状态。站内检查只在网页可见时运行，不创建云端定时任务，也不启用外部通知。日记月份统一为 Asia/Shanghai，独立于配置的双地时钟。
+
+## 评论参与者的站内提示
+
+应用 `cloudbase/migrations/20261030020000_participant_comment_notifications.sql` 后，帖子作者和在新评论之前已经评论过该帖的家人，都会收到其他人新增评论的站内提示。不会重复计算自己此前的多条留言，不提示自己的新评论，不因首次参与而追溯提示更早的评论。帖子的当前查看权限、收起状态和现有提示清除时间继续生效。评论仍平铺显示，不新增评论回复栏。

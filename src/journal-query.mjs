@@ -14,6 +14,8 @@ export async function activityData(store,id,since,until){
  if(store.activity)return store.activity(id,since,until);
  const [posts,comments]=await Promise.all([store.list('posts/'),store.list('comments/')]),allowed=posts.filter(p=>visibleTo(p,id));
  const fresh=allowed.filter(p=>p.author!==id&&(p.sharedAt||p.created)>since&&(p.sharedAt||p.created)<=until).map(p=>({kind:'post',entry:p.id,author:p.author,created:p.sharedAt||p.created}));
- const replies=comments.filter(c=>c.author!==id&&c.created>since&&c.created<=until&&allowed.some(p=>p.id===c.entry&&p.author===id)).map(c=>({kind:'reply',entry:c.entry,author:c.author,created:c.created,id:c.id}));
+ const participated=new Map();for(const c of comments)if(c.author===id&&(!participated.has(c.entry)||c.created<participated.get(c.entry)))participated.set(c.entry,c.created);
+ const own=new Set(allowed.filter(p=>p.author===id).map(p=>p.id)),visible=new Set(allowed.map(p=>p.id));
+ const replies=comments.filter(c=>c.author!==id&&c.created>since&&c.created<=until&&visible.has(c.entry)&&(own.has(c.entry)||participated.has(c.entry)&&participated.get(c.entry)<=c.created)).map(c=>({kind:'reply',entry:c.entry,author:c.author,created:c.created,id:c.id,subject:own.has(c.entry)?'own':'participated'}));
  return {newPosts:fresh.length,newReplies:replies.length,items:[...fresh,...replies].sort((a,b)=>b.created.localeCompare(a.created)).slice(0,30)};
 }

@@ -42,14 +42,19 @@
       "sha256": "c94234c65d9825a9e5df4c1adbf67c89c504ffb2df7435a7504ba58e4db22946"
     },
     {
+      "path": "cloudbase/migrations/20261030020000_participant_comment_notifications.sql",
+      "bytes": 2165,
+      "sha256": "ea484511d11aca7221afdb1239832fb8377c9aecc4f82b3ce99bfc63e5666fd2"
+    },
+    {
       "path": "docs/BACKUP_AND_RESTORE.md",
       "bytes": 5128,
       "sha256": "2e9b7562ca0dd088cacd4b83cf1911b7118949d44e6e2a3af59da27fe1955992"
     },
     {
       "path": "docs/DEPLOYMENT.md",
-      "bytes": 6611,
-      "sha256": "2ea47d4dcbc964744c51ed0947d3031ab0a1c9bf877a739d354b4be1a58435ee"
+      "bytes": 7118,
+      "sha256": "2aa3ea2286234308fe07065eaf7871b75a5ea5c8d0e4969f67c1b593211bb293"
     },
     {
       "path": "docs/PRIVACY_AUDIT.md",
@@ -63,8 +68,8 @@
     },
     {
       "path": "docs/USER_GUIDE.md",
-      "bytes": 12106,
-      "sha256": "f6de009b5f22bd96360dc013351714665978cfd03be6917a66d53a6f0a97cd10"
+      "bytes": 12124,
+      "sha256": "5085969d6b5c22701db499d6e11c0b6f9b80c5e50c62ca71dcfa64db9cf17095"
     },
     {
       "path": "LICENSE",
@@ -88,13 +93,13 @@
     },
     {
       "path": "public/index.html",
-      "bytes": 676,
-      "sha256": "56a35a279ec79061e887eb011d5d74d13d61af84477623e55436692652af9e7d"
+      "bytes": 692,
+      "sha256": "d413f6148f794c3d0d44a008d43e6c34610e5bd6ee225463be6af5460f7e9c9e"
     },
     {
       "path": "README.md",
-      "bytes": 22909,
-      "sha256": "b5a5f22b07d4ceabc9c12ea2f5769466229f5b7747702cae94a391aa2143e83a"
+      "bytes": 22969,
+      "sha256": "2771411709faea21e4800258166b4d25d0bedc58c0ace2c844d855b55169df4e"
     },
     {
       "path": "scripts/build.mjs",
@@ -173,8 +178,8 @@
     },
     {
       "path": "src/diary.tsx",
-      "bytes": 43795,
-      "sha256": "0b86308f9e947127164715919f24cf29b582ce859ccdb5276674439f4ec8213f"
+      "bytes": 43887,
+      "sha256": "c52428db3e47884b439660392bcdb3f56ea08402db61cb688a249d68050316ca"
     },
     {
       "path": "src/drafts.ts",
@@ -213,8 +218,8 @@
     },
     {
       "path": "src/journal-query.mjs",
-      "bytes": 2092,
-      "sha256": "5eefc0694774d7ccb18aef09eebb45c723a87fe31b2befd381928d6389dc967f"
+      "bytes": 2477,
+      "sha256": "41ce70edeeb2bfd4789784d22d00c80a5602656ce78c6f813cdab5e99e6370fd"
     },
     {
       "path": "src/main.tsx",
@@ -333,13 +338,18 @@
     },
     {
       "path": "tests/memory-ui.test.mjs",
-      "bytes": 4622,
-      "sha256": "c3c92f624f7593deb5b74cbc70fee0da41f73e2560c1c329654c04e4efdf7c67"
+      "bytes": 4624,
+      "sha256": "baeed92eb9f67cdd0a802ca634792952b672d60efcf9d86d9c4a9f8551e9b653"
     },
     {
       "path": "tests/opening.test.mjs",
       "bytes": 2806,
       "sha256": "8f7f6735dfcae897884491d77bd10e88513c468dbeb6eb93502b7131832d77b5"
+    },
+    {
+      "path": "tests/participant-notifications.test.mjs",
+      "bytes": 2595,
+      "sha256": "daa0119e55abb0cb000e4e33738aa85ec73dd7233475a77a8b3699c50ba77524"
     },
     {
       "path": "tests/personal-names.test.mjs",

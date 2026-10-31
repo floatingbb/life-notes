@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {activityData} from '../src/journal-query.mjs';
+const at=n=>'2026-01-01T00:00:'+String(n).padStart(2,'0')+'.000Z';
+const posts=[{id:'thread',author:'writer',scope:'family',recipients:[],created:at(0),deleted:null},{id:'own',author:'participant',scope:'family',recipients:[],created:at(0),deleted:null}];
+const comments=[{id:'before-joining',entry:'thread',author:'writer',created:at(5)},{id:'question',entry:'thread',author:'participant',created:at(10)},{id:'more-question',entry:'thread',author:'participant',created:at(15)},{id:'answer',entry:'thread',author:'writer',created:at(20)},{id:'own-answer',entry:'thread',author:'participant',created:at(25)},{id:'third-party',entry:'thread',author:'relative',created:at(30)},{id:'on-own-post',entry:'own',author:'relative',created:at(35)}];
+const store={list:async p=>p==='posts/'?posts:comments};
+const news=await activityData(store,'participant',at(0),at(40));assert.deepEqual(news.items.filter(i=>i.kind==='reply').map(i=>i.id).sort(),['answer','on-own-post','third-party']);assert.equal(news.newReplies,3);assert.equal(news.items.find(i=>i.id==='answer').subject,'participated');assert.equal(news.items.find(i=>i.id==='on-own-post').subject,'own');
+assert.ok(!news.items.some(i=>['before-joining','question','more-question','own-answer'].includes(i.id)),'Earlier comments and own comments are excluded; multiple prior comments do not duplicate alerts');
+const author=await activityData(store,'writer',at(19),at(40));assert.deepEqual(author.items.filter(i=>i.kind==='reply').map(i=>i.id).sort(),['own-answer','third-party']);assert.equal((await activityData(store,'unrelated',at(0),at(40))).newReplies,0);
+assert.deepEqual((await activityData(store,'participant',at(29),at(40))).items.filter(i=>i.kind==='reply').map(i=>i.id).sort(),['on-own-post','third-party'],'Cleared earlier notifications stay cleared');
+posts[0].scope='selected';posts[0].recipients=['relative'];assert.deepEqual((await activityData(store,'participant',at(0),at(40))).items.filter(i=>i.kind==='reply').map(i=>i.id),['on-own-post'],'Participation does not override later visibility restrictions');
+posts[0].scope='family';posts[0].deleted=at(31);assert.equal((await activityData(store,'participant',at(0),at(40))).newReplies,1,'Hidden threads do not generate notifications');
+console.log('PASS: author answers notify previous commenters, later third-party comments notify participants, authors still receive replies, self/earlier comments stay quiet, no duplicate events, and visibility/hidden/seen rules remain enforced.');
